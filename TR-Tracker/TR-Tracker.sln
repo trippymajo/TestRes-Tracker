@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TR-Tracker", "TR-Tracker\TR-Tracker.csproj", "{A40F1C6A-5E11-4075-82C8-69BA75A8FC04}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A40F1C6A-5E11-4075-82C8-69BA75A8FC04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A40F1C6A-5E11-4075-82C8-69BA75A8FC04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A40F1C6A-5E11-4075-82C8-69BA75A8FC04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A40F1C6A-5E11-4075-82C8-69BA75A8FC04}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6CFEED7-27E0-45B2-ADE4-9D4535A4A622}
+	EndGlobalSection
+EndGlobal

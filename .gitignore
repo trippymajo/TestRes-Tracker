@@ -1,0 +1,16 @@
+#Folders#
+.github/
+.vs/
+bin/
+obj/
+#Json configurations#
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Docker.json
+launchSettings.json
+appsettings.json
+#Files extensions#
+*.user
+*.cache
+*.log
+*.env
