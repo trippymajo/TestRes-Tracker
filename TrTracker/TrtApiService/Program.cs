@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using TR_Tracker.Data;
 
-namespace TR_Tracker
+using TrtApiService.UploadService;
+
+namespace TsrApiService
 {
     public class Program
     {
@@ -9,10 +9,11 @@ namespace TR_Tracker
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddDbContext<TrtDbContext>(options =>
-               options.UseNpgsql(builder.Configuration.GetConnectionString("TrtDbContext") 
-               ?? throw new InvalidOperationException("Connection string 'TrtDbContext' not found.")));
+            // Add services to the container.
+
             builder.Services.AddControllers();
+            builder.Services.AddSingleton<IUploadService, LocalUploadService>();
+            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
             var app = builder.Build();
