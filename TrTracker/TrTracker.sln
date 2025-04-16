@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrtParserService", "TrtPars
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrtShared", "TrtShared\TrtShared.csproj", "{21DC2B32-C6C6-4D3A-9B3D-8AD0E1E9C295}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrtUploadServiceTests", "Tests\TrtUploadServiceTests\TrtUploadServiceTests.csproj", "{71811952-89F0-42EC-A41E-1B0DBA7A1983}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{21DC2B32-C6C6-4D3A-9B3D-8AD0E1E9C295}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21DC2B32-C6C6-4D3A-9B3D-8AD0E1E9C295}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21DC2B32-C6C6-4D3A-9B3D-8AD0E1E9C295}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71811952-89F0-42EC-A41E-1B0DBA7A1983}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71811952-89F0-42EC-A41E-1B0DBA7A1983}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71811952-89F0-42EC-A41E-1B0DBA7A1983}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71811952-89F0-42EC-A41E-1B0DBA7A1983}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

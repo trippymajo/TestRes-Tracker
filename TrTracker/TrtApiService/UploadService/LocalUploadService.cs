@@ -1,7 +1,4 @@
-﻿
-using System.Linq.Expressions;
-
-namespace TrtApiService.UploadService
+﻿namespace TrtApiService.UploadService
 {
     public class LocalUploadService : IUploadService
     {

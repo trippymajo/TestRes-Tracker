@@ -26,7 +26,7 @@ namespace TrtApiService.Controllers
             if (file.Length > 50 * 1024 * 1024)
                 return StatusCode(413);
 
-            var fileExt = Path.GetExtension(file.FileName);
+            var fileExt = Path.GetExtension(file.FileName).ToLowerInvariant();
             if (string.IsNullOrEmpty(fileExt) || !AllowedExtensions.Contains(fileExt))
                 return BadRequest();
 
