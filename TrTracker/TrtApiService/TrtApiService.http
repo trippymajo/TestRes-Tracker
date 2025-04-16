@@ -1,0 +1,10 @@
+﻿@TrtApiService_HostAddress = https://localhost:7163
+
+POST {{TrtApiService_HostAddress}}/upload
+Content-Type: application/json
+
+{
+  //IFormFile
+}
+
+###
