@@ -21,7 +21,6 @@
             {
                 Directory.CreateDirectory(_uploadPath);
 
-
                 // Process saving
                 string fullFilePath = Path.Combine(_uploadPath, newSafeName);
                 await using var fs = new FileStream(fullFilePath, FileMode.Create, FileAccess.Write);
