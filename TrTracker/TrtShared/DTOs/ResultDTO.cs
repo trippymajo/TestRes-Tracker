@@ -2,8 +2,8 @@
 {
     public class ResultDTO
     {
-        public int Id { get; set; }
+        public string TestName { get; set; } = string.Empty;
         public string Outcome { get; set; } = string.Empty;
-        public string? ErrMsg { get; set; }
+        public string? ErrMsg { get; set; } 
     }
 }

@@ -14,4 +14,8 @@
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrtShared\TrtShared.csproj" />
+  </ItemGroup>
 </Project>
