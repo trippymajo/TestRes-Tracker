@@ -8,7 +8,7 @@ using TrtShared.DTO;
 
 namespace TrtParserService.FileExtensions
 {
-    interface IFileParser
+    public interface IFileParser
     {
         /// <summary>
         /// Get Date info for TestRun
@@ -28,8 +28,10 @@ namespace TrtParserService.FileExtensions
         /// <summary>
         /// Main parse logic for the file
         /// </summary>
-        /// <param name="path">path to the file to parse</param>
+        /// <param name="path">Path to the file to parse</param>
+        /// <param name="branch">Branch name</param>
+        /// <param name="version">Version name (number as string)</param>
         /// <returns>TestRunDTO for transfering data to DB</returns>
-        public Task<TestRunDTO?> Parse(string path);
+        public Task<TestRunDTO?> Parse(string path, string branch, string version);
     }
 }

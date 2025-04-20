@@ -13,6 +13,7 @@
         {
             var fileExt = Path.GetExtension(file.FileName);
             var newSafeName = $"{Guid.NewGuid()}{fileExt}";
+            string? fullFilePath = null;
 
             // TODO: Dont forget in Docker:
             // RUN mkdir /app/uploads && chmod -R 600 /app/uploads
@@ -22,7 +23,7 @@
                 Directory.CreateDirectory(_uploadPath);
 
                 // Process saving
-                string fullFilePath = Path.Combine(_uploadPath, newSafeName);
+                fullFilePath = Path.Combine(_uploadPath, newSafeName);
                 await using var fs = new FileStream(fullFilePath, FileMode.Create, FileAccess.Write);
                 await file.CopyToAsync(fs);
             }
@@ -32,7 +33,7 @@
                 return null;
             }
 
-            return newSafeName;
+            return fullFilePath;
         }
     }
 }

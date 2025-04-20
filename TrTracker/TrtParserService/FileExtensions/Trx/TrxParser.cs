@@ -11,17 +11,22 @@ namespace TrtParserService.FileExtensions
 {
     class TrxParser : IFileParser
     {
-        private  XDocument? _xDoc;
+        private readonly ILogger<TrxParser> _logger;
+        private XDocument? _xDoc;
 
-        public TrxParser()
+        public TrxParser(ILogger<TrxParser> logger)
         {
+            _logger = logger;
             _xDoc = new XDocument();
         }
 
         public DateTime? ParseDate()
         {
             if (_xDoc == null)
-                return null;
+            {
+                _logger.LogWarning("Trying parsing date failed. Document is null");
+                return null; 
+            }
 
             //   <Times creation="2025-04-16T16:16:21.6226347+03:00"
             //   queuing="2025-04-16T16:16:32.9976281+03:00"
@@ -41,7 +46,10 @@ namespace TrtParserService.FileExtensions
         public IDictionary<string, (string outcome, string? error)>? ParseResults()
         {
             if (_xDoc == null)
+            {
+                _logger.LogWarning("Trying parsing tests info failed. Document is null");
                 return null;
+            }
 
             // <UnitTestResult executionId="222" testId="123" testName="Test123" computerName="StandName"
             // duration="00:00:31.8927852" startTime="2025-04-16T16:58:54.3104569+03:00"
@@ -64,10 +72,13 @@ namespace TrtParserService.FileExtensions
             return unitTestResult;
         }
 
-        public async Task<TestRunDTO?> Parse(string path)
+        public async Task<TestRunDTO?> Parse(string path, string branch, string version)
         {
             if (string.IsNullOrEmpty(path))
+            {
+                _logger.LogWarning("Parse failed. Document is null");
                 return null;
+            }
 
             await using var fstream = File.OpenRead(path);
             _xDoc = await XDocument.LoadAsync(fstream, LoadOptions.None, CancellationToken.None);
@@ -88,8 +99,11 @@ namespace TrtParserService.FileExtensions
             // var branch = do something to get branch name
             // var version = do something to get version
 
-            if (results == null) 
+            if (results == null)
+            {
+                _logger.LogWarning("Parse failed. No results have been parsed from file");
                 return null;
+            }
 
             // Create DTO's
             var resultDtos = results.Select(r => new ResultDTO
@@ -101,8 +115,8 @@ namespace TrtParserService.FileExtensions
 
             var testRunDto = new TestRunDTO
             {
-                // Branch = branch,
-                // Version = version,
+                Branch = branch,
+                Version = version,
                 Date = date,
                 Results = resultDtos
             };
