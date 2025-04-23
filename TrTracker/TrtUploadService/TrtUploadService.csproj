@@ -7,10 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Samples\**" />
-    <Content Remove="Samples\**" />
-    <EmbeddedResource Remove="Samples\**" />
-    <None Remove="Samples\**" />
+    <Folder Include="Controllers\" />
+    <Folder Include="UploadService\" />
   </ItemGroup>
 
   <ItemGroup>
