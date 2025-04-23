@@ -22,6 +22,11 @@ namespace TrtApiService.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// POST file to be parsed and saved
+        /// </summary>
+        /// <param name="file">File to save</param>
+        /// <returns>Http result</returns>
         [HttpPost]
         public async Task<IActionResult> UploadDoc(IFormFile file)
         {

@@ -17,6 +17,31 @@ namespace TrtParserService
             _redis = redis;
         }
 
+        /// <summary>
+        /// Parsing workflow with filefactory and parsing itself
+        /// </summary>
+        /// <param name="fullFilePath">Full file path of parsed item</param>
+        /// <returns>Whether parsing was successful or not</returns>
+        private async Task<bool> ParseProc(string fullFilePath)
+        {
+            var parser = _parserFactory.Create(fullFilePath);
+            if (parser == null)
+            {
+                _logger.LogError("File Factory eploded, parser was not provided!");
+                return false;
+            }
+
+
+            var testRunResultDto = await parser.Parse(fullFilePath, "TODO:BRANCH", "TODO:VERSION");
+            if (testRunResultDto == null)
+            {
+                _logger.LogError("No DTO been created due parse error");
+                return false;
+            }
+
+            return true;
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
@@ -39,20 +64,11 @@ namespace TrtParserService
                             _logger.LogInformation("fullFilePath from redis: {Path}", fullFilePath);
 
                         // Parse file
+                        bool bParse = await ParseProc(fullFilePath);
 
-                        var parser = _parserFactory.Create(fullFilePath);
-                        if (parser == null)
+                        if (bParse)
                         {
-                            _logger.LogError("File Factory eploded, parser was not provided!");
-                            return;
-                        }
-
-
-                        var testRunResultDto = await parser.Parse(fullFilePath, "TODO:BRANCH", "TODO:VERSION");
-                        if (testRunResultDto == null)
-                        {
-                            _logger.LogError("No DTO been created due parse error");
-                            return;
+                            // TODO: Call API's POST in to DB
                         }
                     });
                 }

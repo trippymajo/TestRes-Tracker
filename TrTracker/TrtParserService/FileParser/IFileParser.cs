@@ -26,7 +26,7 @@ namespace TrtParserService.FileExtensions
         public IDictionary<string, (string outcome, string? error)>? ParseResults();
 
         /// <summary>
-        /// Main parse logic for the file
+        /// Main method for parse logic for the file
         /// </summary>
         /// <param name="path">Path to the file to parse</param>
         /// <param name="branch">Branch name</param>
