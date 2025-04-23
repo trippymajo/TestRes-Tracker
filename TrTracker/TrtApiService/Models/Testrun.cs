@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TR_Tracker.Models
+namespace TrtApiService.Models
 {
     public class Testrun
     {

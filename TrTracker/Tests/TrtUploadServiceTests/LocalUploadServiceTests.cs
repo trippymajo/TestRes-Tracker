@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Text;
-using TrtApiService.UploadService;
+using TrtUploadService.UploadService;
 
 namespace TrtUploadService
 {

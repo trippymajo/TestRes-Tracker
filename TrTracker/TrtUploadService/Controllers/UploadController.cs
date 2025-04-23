@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
-using TrtApiService.UploadService;
+using TrtUploadService.UploadService;
 
 namespace TrtApiService.Controllers
 {

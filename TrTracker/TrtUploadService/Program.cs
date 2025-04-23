@@ -1,7 +1,7 @@
+using TrtUploadService.UploadService;
 using StackExchange.Redis;
-using TrtApiService.UploadService;
 
-namespace TsrApiService
+namespace TrtUploadService
 {
     public class Program
     {

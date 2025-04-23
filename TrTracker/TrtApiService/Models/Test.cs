@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TR_Tracker.Models
+namespace TrtApiService.Models
 {
     public class Test
     {

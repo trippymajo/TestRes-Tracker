@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using TrtApiService.Data;
 
 namespace TsrUploadService
 {
@@ -12,6 +14,9 @@ namespace TsrUploadService
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddDbContext<TrtDbContext>(options =>
+                           options.UseNpgsql(builder.Configuration.GetConnectionString("TrtDbContext")
+                           ?? throw new InvalidOperationException("Connection string 'TrtDbContext' not found.")));
 
             var app = builder.Build();
 
