@@ -2,7 +2,7 @@
 using System.Text;
 using TrtUploadService.UploadService;
 
-namespace TrtUploadService
+namespace UploadService
 {
     public class LocalUploadServiceTests
     {

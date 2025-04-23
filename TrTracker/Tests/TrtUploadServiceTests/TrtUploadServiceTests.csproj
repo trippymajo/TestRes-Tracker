@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TrtApiService\TrtUploadService.csproj" />
+    <ProjectReference Include="..\..\TrtUploadService\TrtUploadService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
