@@ -1,7 +1,5 @@
-using StackExchange.Redis;
-using TrtApiService.UploadService;
 
-namespace TsrApiService
+namespace TsrUploadService
 {
     public class Program
     {
@@ -12,9 +10,6 @@ namespace TsrApiService
             // Add services to the container.
 
             builder.Services.AddControllers();
-            builder.Services.AddScoped<IUploadService, LocalUploadService>();
-            builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-                ConnectionMultiplexer.Connect("redis"));
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
