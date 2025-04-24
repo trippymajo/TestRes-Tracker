@@ -10,7 +10,6 @@ namespace TrtApiService.Models
 
         [Required] // Let it be string at first, then i need my own enum
         public string Outcome { get; set; } = string.Empty;
-        
         public string? ErrMsg { get; set; }
 
         // Foreign Key
