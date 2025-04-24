@@ -17,6 +17,13 @@ namespace TsrUploadService
             builder.Services.AddDbContext<TrtDbContext>(options =>
                            options.UseNpgsql(builder.Configuration.GetConnectionString("TrtDbContext")
                            ?? throw new InvalidOperationException("Connection string 'TrtDbContext' not found.")));
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ManageBranches", policy =>
+                {
+                    policy.RequireClaim("role", "admin");
+                });
+            });
 
             var app = builder.Build();
 
