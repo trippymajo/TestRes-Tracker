@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using TrtShared.DTO;
 
@@ -80,8 +82,16 @@ namespace TrtParserService.FileExtensions
                 return null;
             }
 
-            await using var fstream = File.OpenRead(path);
-            _xDoc = await XDocument.LoadAsync(fstream, LoadOptions.None, CancellationToken.None);
+            // Avoid XML injections
+            var settings = new XmlReaderSettings
+            {
+                DtdProcessing = DtdProcessing.Prohibit,
+                XmlResolver = null
+            };
+
+            using var fstream = File.OpenRead(path);
+            using var reader = XmlReader.Create(fstream, settings);
+            _xDoc = await XDocument.LoadAsync(reader, LoadOptions.None, CancellationToken.None);
 
             //// Get UnitTest info
             ////  <UnitTest name="Test123" storage="path" id="123">

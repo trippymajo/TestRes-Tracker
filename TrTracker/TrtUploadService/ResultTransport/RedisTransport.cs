@@ -28,7 +28,6 @@ namespace TrtUploadService.ResultTransport
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to publish file path to Redis");
-                throw; // Rethrow fatal redis error
             }
         }
 

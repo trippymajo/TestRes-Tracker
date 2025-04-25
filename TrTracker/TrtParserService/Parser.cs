@@ -90,7 +90,6 @@ namespace TrtParserService
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Failed to start ParserService's Redis subscription");
-                    throw;
                 }
 
 
