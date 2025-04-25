@@ -1,10 +1,10 @@
 ﻿namespace TrtUploadService.UploadService
 {
-    public class LocalUploadService : IUploadService
+    public class LocalUploadDocService : IUploadDocService
     {
         private readonly string _uploadPath;
 
-        public LocalUploadService()
+        public LocalUploadDocService()
         {
             _uploadPath = Path.Combine(Path.GetTempPath(), "TrtUploads");
         }

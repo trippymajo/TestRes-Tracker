@@ -1,5 +1,7 @@
 using TrtUploadService.UploadService;
 using StackExchange.Redis;
+using TrtUploadService.ResultTransport;
+using TrtUploadService.UploadResultsService;
 
 namespace TrtUploadService
 {
@@ -12,9 +14,18 @@ namespace TrtUploadService
             // Add services to the container.
 
             builder.Services.AddControllers();
-            builder.Services.AddScoped<IUploadService, LocalUploadService>();
+            builder.Services.AddScoped<IUploadDocService, LocalUploadDocService>();
+            builder.Services.AddScoped<IResultTransport, RedisTransport>();
+
+            var resultsApiUrl = builder.Configuration["Services:TrtApiService"];
+            builder.Services.AddHttpClient<IUploadResultsService, ApiUploadResultsService>(client =>
+            {
+                client.BaseAddress = new Uri(resultsApiUrl!);
+            });
+
             builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
                 ConnectionMultiplexer.Connect("redis"));
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 

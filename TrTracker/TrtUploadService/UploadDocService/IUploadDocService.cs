@@ -1,6 +1,6 @@
 ﻿namespace TrtUploadService.UploadService
 {
-    public interface IUploadService
+    public interface IUploadDocService
     {
         /// <summary>
         /// Process saving file in temporary folder

@@ -10,7 +10,7 @@ namespace UploadService
         public async Task SaveFileAsync_ValidFile_FileIsCreated()
         {
             // Init service
-            var uploadService = new LocalUploadService();
+            var uploadService = new LocalUploadDocService();
 
             var tempFileName = "test.trx";
             var fileContent = "Hello, world!";

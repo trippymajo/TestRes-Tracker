@@ -121,6 +121,7 @@ namespace TrtApiService.Controllers
         }
 
         /// <summary>
+        /// POST: api/UploadResults
         /// POSTs all info about test run in to the DB
         /// </summary>
         /// <param name="dto">Data to put in to DB</param>

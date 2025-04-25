@@ -1,7 +1,8 @@
-﻿using System;
-using System.IO;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
+using TrtShared.DTO;
+using TrtUploadService.ResultTransport;
+using TrtUploadService.UploadResultsService;
 using TrtUploadService.UploadService;
 
 namespace TrtApiService.Controllers
@@ -11,19 +12,21 @@ namespace TrtApiService.Controllers
     public class UploadController : Controller
     {
         private static readonly HashSet<string> AllowedExtensions = [".trx"];
-        private readonly IConnectionMultiplexer _redis;
-        private readonly IUploadService _uploadService;
+        private readonly IUploadDocService _uploadDoc;
+        private readonly IUploadResultsService _uploadResults;
+        private readonly IResultTransport _resultTransport;
         private readonly ILogger<UploadController> _logger;
 
-        public UploadController(IUploadService uploadService, IConnectionMultiplexer redis, ILogger<UploadController> logger)
+        public UploadController(IUploadDocService uploadDoc, IUploadResultsService uploadResults, IResultTransport resultTransport, ILogger<UploadController> logger)
         {
-            _uploadService = uploadService;
-            _redis = redis;
+            _uploadDoc = uploadDoc;
+            _uploadResults = uploadResults;
+            _resultTransport = resultTransport;
             _logger = logger;
         }
 
         /// <summary>
-        /// POST file to be parsed and saved
+        /// POST file to be saved, parsed and pushed to DB
         /// </summary>
         /// <param name="file">File to save</param>
         /// <returns>Http result</returns>
@@ -33,7 +36,7 @@ namespace TrtApiService.Controllers
             if (file == null)
             {
                 _logger.LogWarning("Uploading doc failed! Incoming file is nul");
-                return BadRequest();
+                return BadRequest("File is null");
             }
 
             if (file.Length > 50 * 1024 * 1024)
@@ -46,31 +49,30 @@ namespace TrtApiService.Controllers
             if (string.IsNullOrEmpty(fileExt) || !AllowedExtensions.Contains(fileExt))
             {
                 _logger.LogWarning("Uploading doc failed! Incoming file's extension is empty");
-                return BadRequest();
+                return BadRequest("Unsuported file extension!");
             }
 
-            var fullFilePath = await _uploadService.SaveFileAsync(file);
+            var fullFilePath = await _uploadDoc.SaveFileAsync(file);
             if (fullFilePath == null)
             {
                 _logger.LogWarning("Uploading doc failed! Error on saving file to local server");
-                return BadRequest();
+                return BadRequest("Error on saving file to local server");
             }
 
-            try
-            {
-                var pub = _redis.GetSubscriber();
-                var channel = RedisChannel.Literal("file-events");
-                await pub.PublishAsync(channel, fullFilePath);
-                _logger.LogInformation("Published to Redis: {Path}", fullFilePath);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to publish file path to Redis: {Path}", fullFilePath);
-                throw; // Rethrow fatal redis error
-            }
-
+            // Now publishing path to ParserService
+            await _resultTransport.PublishPathToFile(fullFilePath);
             _logger.LogInformation("File has been successfully uploaded!");
-            return Ok("Uploaded");
+
+            // Waiting for the response from ParserService
+            var parsedDto = await _resultTransport.SubscribeParsedDto(TimeSpan.FromSeconds(60));
+            if (parsedDto == null)
+                return StatusCode(500, "ParserService returned null or failed");
+
+            var result = await _uploadResults.PushResultsToDb(parsedDto);
+            if (!result)
+                return StatusCode(500, "Failed to save TestRun to database");
+
+            return Ok("Added to DB");
         }
     }
 }
