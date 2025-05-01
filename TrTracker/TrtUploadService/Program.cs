@@ -3,6 +3,7 @@ using StackExchange.Redis;
 using TrtUploadService.ResultTransport;
 using TrtUploadService.UploadResultsService;
 using TrtShared.ServiceCommunication;
+using TrtShared.ResultTransport;
 
 namespace TrtUploadService
 {

@@ -1,6 +1,6 @@
 ﻿using TrtShared.DTO;
 
-namespace TrtUploadService.ResultTransport
+namespace TrtShared.ResultTransport
 {
     public interface IResultTransport
     {
@@ -8,13 +8,13 @@ namespace TrtUploadService.ResultTransport
         /// Publishes path of the saved file to Parsing service
         /// </summary>
         /// <param name="path">Full file path of the saved file</param>
-        public Task PublishPathToFile(string path);
+        public Task PublishPathToFileAsync(string path);
 
         /// <summary>
-        /// Subscrives to Parser service in order to get Parsed Dto
+        /// Subscribes to Parser service in order to get Parsed Dto
         /// </summary>
         /// <param name="timeout">Timeout value to count</param>
         /// <returns>Dto of the parsed file</returns>
-        public Task<TestRunDTO?> SubscribeParsedDto(TimeSpan timeout);
+        public Task<TestRunDTO?> GetParsedDtoAsync(TimeSpan timeout);
     }
 }

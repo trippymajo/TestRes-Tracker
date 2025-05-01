@@ -2,6 +2,7 @@
 using StackExchange.Redis;
 using System.Diagnostics.SymbolStore;
 using TrtShared.DTO;
+using TrtShared.ResultTransport;
 
 namespace TrtUploadService.ResultTransport
 {
@@ -16,7 +17,7 @@ namespace TrtUploadService.ResultTransport
             _logger = logger;
         }
 
-        public async Task PublishPathToFile(string path)
+        public async Task PublishPathToFileAsync(string path)
         {
             try
             {
@@ -31,7 +32,7 @@ namespace TrtUploadService.ResultTransport
             }
         }
 
-        public async Task<TestRunDTO?> SubscribeParsedDto(TimeSpan timeout)
+        public async Task<TestRunDTO?> GetParsedDtoAsync(TimeSpan timeout)
         {
             var sub = _redis.GetSubscriber();
             var tcs = new TaskCompletionSource<TestRunDTO?>();
@@ -43,7 +44,7 @@ namespace TrtUploadService.ResultTransport
                 {
                     if (message.IsNullOrEmpty)
                     {
-                        _logger.LogError("ParserService returned empy message via Redis");
+                        _logger.LogError("ParserService returned empty message via Redis");
                         tcs.TrySetResult(null);
                         await sub.UnsubscribeAsync(channel);
                         return;
