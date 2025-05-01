@@ -2,6 +2,7 @@ using TrtUploadService.UploadService;
 using StackExchange.Redis;
 using TrtUploadService.ResultTransport;
 using TrtUploadService.UploadResultsService;
+using TrtShared.ServiceCommunication;
 
 namespace TrtUploadService
 {
@@ -17,14 +18,32 @@ namespace TrtUploadService
             builder.Services.AddScoped<IUploadDocService, LocalUploadDocService>();
             builder.Services.AddScoped<IResultTransport, RedisTransport>();
 
+
+            // Be able to call REST of API service
             var resultsApiUrl = builder.Configuration["Services:TrtApiService"];
             builder.Services.AddHttpClient<IUploadResultsService, ApiUploadResultsService>(client =>
             {
                 client.BaseAddress = new Uri(resultsApiUrl!);
             });
 
+
+            // Redis section DI
+            builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("Redis"));
+            var redisSettings = builder.Configuration.GetSection("Redis").Get<RedisSettings>();
+
+            if (redisSettings is null)
+                throw new InvalidOperationException("Redis settings are missing in configuration");
+
+            var redisOptions = new ConfigurationOptions
+            {
+                EndPoints = { $"{redisSettings.Host}:{redisSettings.Port}" },
+                Password = redisSettings.Password,
+                Ssl = redisSettings.UseSsl
+            };
+
             builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-                ConnectionMultiplexer.Connect("redis"));
+                ConnectionMultiplexer.Connect(redisOptions));
+
 
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
