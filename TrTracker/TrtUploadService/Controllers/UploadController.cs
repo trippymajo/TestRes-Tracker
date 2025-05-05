@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 using TrtShared.DTO;
+using TrtShared.ResultTransport;
 using TrtUploadService.ResultTransport;
 using TrtUploadService.UploadResultsService;
 using TrtUploadService.UploadService;
@@ -60,11 +61,11 @@ namespace TrtApiService.Controllers
             }
 
             // Now publishing path to ParserService
-            await _resultTransport.PublishPathToFile(fullFilePath);
+            await _resultTransport.PublishPathToFileAsync(fullFilePath);
             _logger.LogInformation("File has been successfully uploaded!");
 
             // Waiting for the response from ParserService
-            var parsedDto = await _resultTransport.SubscribeParsedDto(TimeSpan.FromSeconds(60));
+            var parsedDto = await _resultTransport.GetParsedDtoAsync(TimeSpan.FromSeconds(60));
             if (parsedDto == null)
                 return StatusCode(500, "ParserService returned null or failed");
 
