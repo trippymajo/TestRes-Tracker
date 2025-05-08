@@ -3,7 +3,6 @@ using StackExchange.Redis;
 using TrtUploadService.ResultTransport;
 using TrtUploadService.UploadResultsService;
 using TrtShared.ServiceCommunication;
-using TrtShared.ResultTransport;
 
 namespace TrtUploadService
 {
@@ -17,7 +16,7 @@ namespace TrtUploadService
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<IUploadDocService, LocalUploadDocService>();
-            builder.Services.AddScoped<IResultTransport, RedisTransport>();
+            builder.Services.AddSingleton<IUploadTransport, RedisTransport>();
 
 
             // Be able to call REST of API service

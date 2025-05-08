@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using StackExchange.Redis;
-using System.Diagnostics.SymbolStore;
 using TrtShared.DTO;
-using TrtShared.ResultTransport;
+using TrtShared.ServiceCommunication;
 
 namespace TrtUploadService.ResultTransport
 {
-    public class RedisTransport : IResultTransport
+    public class RedisTransport : IUploadTransport
     {
         private readonly IConnectionMultiplexer _redis;
         private readonly ILogger<RedisTransport> _logger;

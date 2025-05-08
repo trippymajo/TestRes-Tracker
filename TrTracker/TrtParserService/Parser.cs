@@ -1,9 +1,7 @@
-using StackExchange.Redis;
-using Newtonsoft.Json.Serialization;
 using TrtParserService.FileExtensions;
 using TrtShared.DTO;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using TrtShared.ServiceCommunication;
 
 namespace TrtParserService
 {
@@ -11,14 +9,13 @@ namespace TrtParserService
     {
         private readonly IFileParserFactory _parserFactory;
         private readonly ILogger<Parser> _logger;
-        private readonly IConnectionMultiplexer _redis;
-        
+        private readonly IParseTransport _resultTransport;
 
-        public Parser(IFileParserFactory parserFactory, ILogger<Parser> logger, IConnectionMultiplexer redis)
+        public Parser(IFileParserFactory parserFactory, ILogger<Parser> logger, IParseTransport transport)
         {
             _logger = logger;
             _parserFactory = parserFactory;
-            _redis = redis;
+            _resultTransport = transport;
         }
 
         /// <summary>
@@ -47,54 +44,27 @@ namespace TrtParserService
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            await foreach (var fullFilePath in _resultTransport.PathReader.ReadAllAsync(stoppingToken))
             {
-                var pubsub = _redis.GetSubscriber();
-
                 try
                 {
-                    var channelSub = RedisChannel.Literal("file-uploaded");
-                    var channelPub = RedisChannel.Literal("file-parsed");
+                    var dto = await ParseProc(fullFilePath);
 
-                    await pubsub.SubscribeAsync(channelSub, async (channelSub, message) =>
-                    {
-                        try
-                        {
-                            // Get info from Redis
-                            var fullFilePath = message.ToString();
-                            if (string.IsNullOrWhiteSpace(fullFilePath))
-                            {
-                                _logger.LogError("Redis haven't delivered right fullFilePath");
-                                return;
-                            }
-                            else
-                                _logger.LogInformation("fullFilePath from redis: {Path}", fullFilePath);
+                    if (dto == null)
+                        _logger.LogError("DTO was not formed after parsing");
 
-                            // Parse file
-                            var dto = await ParseProc(fullFilePath);
+                    // Publish result dto to UploadService via redis
+                    var dtoJson = JsonConvert.SerializeObject(dto);
+                    await _resultTransport.PublishParsedDtoAsync(dtoJson);
+                    _logger.LogInformation("Published to Redis: {dtoJson}", dtoJson);
 
-                            if (dto == null)
-                                _logger.LogError("DTO was not formed after parsing");
-
-                            // Publish result dto to UploadService via redis
-                            var dtoJson = JsonConvert.SerializeObject(dto);
-                            await pubsub.PublishAsync(channelPub, dtoJson);
-                            _logger.LogInformation("Published to Redis: {dtoJson}", dtoJson);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Error while processing uploaded file");
-                        }
-                    });
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed to start ParserService's Redis subscription");
+                    _logger.LogError(ex, "Error while processing file: {path}", fullFilePath);
                 }
-
-
-                await Task.Delay(Timeout.Infinite, stoppingToken);
             }
+                await Task.Delay(Timeout.Infinite, stoppingToken);
         }
     }
 }

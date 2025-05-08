@@ -1,6 +1,6 @@
 ﻿using TrtShared.DTO;
 
-namespace TrtShared.ResultTransport
+namespace TrtShared.ServiceCommunication
 {
     public interface IUploadTransport
     {

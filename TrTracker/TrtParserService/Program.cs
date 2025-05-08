@@ -1,6 +1,7 @@
 using TrtParserService.FileExtensions;
 using StackExchange.Redis;
 using TrtShared.ServiceCommunication;
+using TrtParserService.ResultTransport;
 
 namespace TrtParserService
 {
@@ -11,9 +12,9 @@ namespace TrtParserService
             var builder = Host.CreateApplicationBuilder(args);
             builder.Services.AddHostedService<Parser>();
 
-            builder.Services.AddScoped<IFileParserFactory, FileParserFactory>();
-            builder.Services.AddScoped<TrxParser>();
-
+            builder.Services.AddSingleton<IFileParserFactory, FileParserFactory>();
+            builder.Services.AddSingleton<TrxParser>();
+            builder.Services.AddSingleton<IParseTransport, RedisTransport>();
 
             // Redis section DI
             builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("Redis"));
@@ -29,6 +30,8 @@ namespace TrtParserService
                 Ssl = redisSettings.UseSsl
             };
 
+            builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+                ConnectionMultiplexer.Connect(redisOptions));
 
             var host = builder.Build();
             host.Run();

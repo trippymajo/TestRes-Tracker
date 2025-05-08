@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
-using TrtShared.DTO;
-using TrtShared.ResultTransport;
-using TrtUploadService.ResultTransport;
+using TrtShared.ServiceCommunication;
 using TrtUploadService.UploadResultsService;
 using TrtUploadService.UploadService;
 
@@ -15,10 +13,10 @@ namespace TrtApiService.Controllers
         private static readonly HashSet<string> AllowedExtensions = [".trx"];
         private readonly IUploadDocService _uploadDoc;
         private readonly IUploadResultsService _uploadResults;
-        private readonly IResultTransport _resultTransport;
+        private readonly IUploadTransport _resultTransport;
         private readonly ILogger<UploadController> _logger;
 
-        public UploadController(IUploadDocService uploadDoc, IUploadResultsService uploadResults, IResultTransport resultTransport, ILogger<UploadController> logger)
+        public UploadController(IUploadDocService uploadDoc, IUploadResultsService uploadResults, IUploadTransport resultTransport, ILogger<UploadController> logger)
         {
             _uploadDoc = uploadDoc;
             _uploadResults = uploadResults;
@@ -60,12 +58,15 @@ namespace TrtApiService.Controllers
                 return BadRequest("Error on saving file to local server");
             }
 
+            // Task to subscribe, in order to prevent race
+            var dtoTask = _resultTransport.GetParsedDtoAsync(TimeSpan.FromSeconds(60));
+
             // Now publishing path to ParserService
             await _resultTransport.PublishPathToFileAsync(fullFilePath);
             _logger.LogInformation("File has been successfully uploaded!");
 
             // Waiting for the response from ParserService
-            var parsedDto = await _resultTransport.GetParsedDtoAsync(TimeSpan.FromSeconds(60));
+            var parsedDto = await dtoTask;
             if (parsedDto == null)
                 return StatusCode(500, "ParserService returned null or failed");
 
