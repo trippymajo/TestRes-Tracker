@@ -1,10 +1,5 @@
 ﻿@TrtApiService_HostAddress = https://localhost:7163
 
-POST {{TrtApiService_HostAddress}}/upload
-Content-Type: application/json
+POST {{TrtApiService_HostAddress}}/Upload
 
-{
-  //IFormFile
-}
-
-###
+file=@C:/Users/Elia/Desktop/TestSamples/mstest.trx

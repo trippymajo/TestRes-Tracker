@@ -86,7 +86,8 @@ namespace TrtParserService.FileExtensions
             var settings = new XmlReaderSettings
             {
                 DtdProcessing = DtdProcessing.Prohibit,
-                XmlResolver = null
+                XmlResolver = null,
+                Async = true
             };
 
             using var fstream = File.OpenRead(path);

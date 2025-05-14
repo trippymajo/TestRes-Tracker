@@ -18,6 +18,9 @@ namespace TrtUploadService
             builder.Services.AddScoped<IUploadDocService, LocalUploadDocService>();
             builder.Services.AddSingleton<IUploadTransport, RedisTransport>();
 
+            // Say we are gay gamers exloring reality aka SWAGGER
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             // Be able to call REST of API service
             var resultsApiUrl = builder.Configuration["Services:TrtApiService"];
@@ -25,7 +28,6 @@ namespace TrtUploadService
             {
                 client.BaseAddress = new Uri(resultsApiUrl!);
             });
-
 
             // Redis section DI
             builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("Redis"));
@@ -44,16 +46,13 @@ namespace TrtUploadService
             builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
                 ConnectionMultiplexer.Connect(redisOptions));
 
-
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
