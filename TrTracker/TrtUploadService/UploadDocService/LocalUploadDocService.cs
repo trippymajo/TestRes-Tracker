@@ -9,14 +9,6 @@
             _uploadPath = Path.Combine(Path.GetTempPath(), "TrtUploads");
         }
 
-        /// <summary>
-        /// AsyncSave file to path on local machine
-        /// </summary>
-        /// <param name="file">File to save</param>
-        /// <returns>
-        /// Full file path of the saved file.
-        /// [null] - error occured
-        /// </returns>
         public async Task<string?> SaveFileAsync(IFormFile file)
         {
             var fileExt = Path.GetExtension(file.FileName);

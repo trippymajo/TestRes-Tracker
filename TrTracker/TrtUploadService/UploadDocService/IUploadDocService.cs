@@ -3,7 +3,7 @@
     public interface IUploadDocService
     {
         /// <summary>
-        /// Process saving file in temporary folder
+        /// Process async saving file in temporary folder
         /// </summary>
         /// <param name="file">File to save</param>
         /// <returns>
