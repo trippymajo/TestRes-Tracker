@@ -1,4 +1,4 @@
-﻿namespace TrtUploadService.UploadService
+﻿namespace TrtUploadService.UploadDocService
 {
     public interface IUploadDocService
     {

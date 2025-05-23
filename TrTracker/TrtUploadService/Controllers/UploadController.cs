@@ -2,7 +2,7 @@
 using StackExchange.Redis;
 using TrtShared.ServiceCommunication;
 using TrtUploadService.UploadResultsService;
-using TrtUploadService.UploadService;
+using TrtUploadService.UploadDocService;
 
 namespace TrtApiService.Controllers
 {

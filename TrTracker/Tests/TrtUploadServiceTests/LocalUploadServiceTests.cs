@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Text;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 using TrtShared.DTO;
 
 // Tested namespaces
-using TrtUploadService.UploadService;
+using TrtUploadService.UploadDocService;
 using TrtUploadService.UploadResultsService;
 
-namespace UploadService
+namespace TrtUploadServiceTests
 {
     public class LocalUploadServiceTests
     {

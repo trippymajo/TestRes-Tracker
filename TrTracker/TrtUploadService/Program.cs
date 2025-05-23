@@ -1,9 +1,8 @@
-using TrtUploadService.UploadService;
+using TrtUploadService.UploadDocService;
 using StackExchange.Redis;
 using TrtUploadService.ResultTransport;
 using TrtUploadService.UploadResultsService;
 using TrtShared.ServiceCommunication;
-using TrtUploadService.UploadDocService;
 using Microsoft.Extensions.Options;
 using Amazon.S3;
 

@@ -1,10 +1,7 @@
-﻿using Amazon;
-using Amazon.S3;
+﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
-using System.Net.Mime;
 using TrtShared.ServiceCommunication;
-using TrtUploadService.UploadService;
 
 namespace TrtUploadService.UploadDocService
 {
