@@ -2,20 +2,24 @@ using TrtParserService.FileExtensions;
 using TrtShared.DTO;
 using Newtonsoft.Json;
 using TrtShared.ServiceCommunication;
+using TrtParserService.FileReader;
 
 namespace TrtParserService
 {
     public class Parser : BackgroundService
     {
         private readonly IFileParserFactory _parserFactory;
-        private readonly ILogger<Parser> _logger;
+        private readonly IFileReader _fileReader;
         private readonly IParseTransport _resultTransport;
+        private readonly ILogger<Parser> _logger;
 
-        public Parser(IFileParserFactory parserFactory, ILogger<Parser> logger, IParseTransport transport)
+
+        public Parser(IFileParserFactory parserFactory, IFileReader fileReader, IParseTransport transport, ILogger<Parser> logger)
         {
-            _logger = logger;
+            _fileReader = fileReader;
             _parserFactory = parserFactory;
             _resultTransport = transport;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,7 +36,9 @@ namespace TrtParserService
                 return null;
             }
 
-            var testRunResultDto = await parser.Parse(fullFilePath, "TODO:BRANCH", "TODO:VERSION");
+            using var streamFile = await _fileReader.OpenFileStreamAsync(fullFilePath);
+
+            var testRunResultDto = await parser.Parse(streamFile, "TODO:BRANCH", "TODO:VERSION");
             if (testRunResultDto == null)
             {
                 _logger.LogError("No DTO been created due parse error");
@@ -56,12 +62,12 @@ namespace TrtParserService
                     // Publish result dto to UploadService via redis
                     var dtoJson = JsonConvert.SerializeObject(dto);
                     await _resultTransport.PublishParsedDtoAsync(dtoJson);
-                    _logger.LogInformation("Published to Redis: {dtoJson}", dtoJson);
+                    _logger.LogInformation("Published to Redis: {DtoJson}", dtoJson);
 
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error while processing file: {path}", fullFilePath);
+                    _logger.LogError(ex, "Error while processing file: {Path}", fullFilePath);
                 }
             }
                 await Task.Delay(Timeout.Infinite, stoppingToken);

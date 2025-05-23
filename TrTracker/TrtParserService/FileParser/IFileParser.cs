@@ -32,6 +32,6 @@ namespace TrtParserService.FileExtensions
         /// <param name="branch">Branch name</param>
         /// <param name="version">Version name (number as string)</param>
         /// <returns>TestRunDTO for transfering data to DB</returns>
-        public Task<TestRunDTO?> Parse(string path, string branch, string version);
+        public Task<TestRunDTO?> Parse(Stream? streamFile, string branch, string version);
     }
 }

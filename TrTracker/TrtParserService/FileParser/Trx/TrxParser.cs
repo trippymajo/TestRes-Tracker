@@ -74,11 +74,11 @@ namespace TrtParserService.FileExtensions
             return unitTestResult;
         }
 
-        public async Task<TestRunDTO?> Parse(string path, string branch, string version)
+        public async Task<TestRunDTO?> Parse(Stream? streamFile, string branch, string version)
         {
-            if (string.IsNullOrEmpty(path))
+            if (streamFile is null)
             {
-                _logger.LogWarning("Parse failed. Document is null");
+                _logger.LogWarning("Parse failed. File stream is null");
                 return null;
             }
 
@@ -90,8 +90,7 @@ namespace TrtParserService.FileExtensions
                 Async = true
             };
 
-            using var fstream = File.OpenRead(path);
-            using var reader = XmlReader.Create(fstream, settings);
+            using var reader = XmlReader.Create(streamFile, settings);
             _xDoc = await XDocument.LoadAsync(reader, LoadOptions.None, CancellationToken.None);
 
             //// Get UnitTest info

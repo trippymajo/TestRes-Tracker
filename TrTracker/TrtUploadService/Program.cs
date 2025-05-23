@@ -4,9 +4,8 @@ using TrtUploadService.ResultTransport;
 using TrtUploadService.UploadResultsService;
 using TrtShared.ServiceCommunication;
 using TrtUploadService.UploadDocService;
-using Microsoft.Extensions.DependencyInjection;
-using Amazon.S3;
 using Microsoft.Extensions.Options;
+using Amazon.S3;
 
 namespace TrtUploadService
 {
@@ -33,6 +32,7 @@ namespace TrtUploadService
                     var awsRegion = Amazon.RegionEndpoint.GetBySystemName(s3AwsSettings.Region);
                     return new AmazonS3Client(awsRegion);
                 });
+
                 builder.Services.AddScoped<IUploadDocService, S3UploadDocService>();
             }
             else
