@@ -3,10 +3,12 @@
     public class LocalUploadDocService : IUploadDocService
     {
         private readonly string _uploadPath;
+        private readonly ILogger<LocalUploadDocService> _logger;
 
-        public LocalUploadDocService()
+        public LocalUploadDocService(ILogger<LocalUploadDocService> logger)
         {
             _uploadPath = Path.Combine(Path.GetTempPath(), "TrtUploads");
+            _logger = logger;
         }
 
         public async Task<string?> SaveFileAsync(IFormFile file)
@@ -29,10 +31,11 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Exception occured while saving file: {ex}");
+                _logger.LogError(ex, "Exception occured while saving file to local storage!");
                 return null;
             }
 
+            _logger.LogInformation("File was saved: {Path}", fullFilePath);
             return fullFilePath;
         }
     }

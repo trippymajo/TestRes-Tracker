@@ -27,7 +27,7 @@ namespace TrtUploadService.ResultTransport
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to publish file path to Redis");
+                _logger.LogCritical(ex, "Critical error! Failed to publish file path to Redis");
             }
         }
 
@@ -64,7 +64,7 @@ namespace TrtUploadService.ResultTransport
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error while processing Redis message");
+                    _logger.LogCritical (ex, "Critical error while processing Redis message");
                     tcs.TrySetException(ex);
                     await sub.UnsubscribeAsync(channel);
                 }

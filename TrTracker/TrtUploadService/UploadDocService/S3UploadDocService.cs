@@ -12,11 +12,13 @@ namespace TrtUploadService.UploadDocService
     {
         private readonly string _bucketName;
         private readonly IAmazonS3 _client;
+        private readonly ILogger<S3UploadDocService> _logger;
 
-        public S3UploadDocService(IAmazonS3 s3Client, IOptions<S3AwsSettings> awsSettings)
+        public S3UploadDocService(IAmazonS3 s3Client, IOptions<S3AwsSettings> awsSettings, ILogger<S3UploadDocService> logger)
         {
             _client = s3Client;
             _bucketName = awsSettings.Value.BucketName;
+            _logger = logger;
         }
 
         public async Task<string?> SaveFileAsync(IFormFile file)
@@ -39,18 +41,16 @@ namespace TrtUploadService.UploadDocService
             }
             catch (AmazonS3Exception e)
             {
-                Console.WriteLine(
-                        "Error encountered ***. Message:'{0}' when writing an object"
-                        , e.Message);
+                _logger.LogError(e, "Error encountered on saving file to S3");
                 return null;
             }
             catch (Exception e)
             {
-                Console.WriteLine(
-                    "Unknown encountered on server. Message:'{0}' when writing an object"
-                    , e.Message);
+                _logger.LogError(e, "Unknown error encountered when saving file to S3");
                 return null;
             }
+
+            _logger.LogInformation("File was saved in S3: {Key}", newKey);
             return newKey;
         }
     }
