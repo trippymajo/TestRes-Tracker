@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TrtParserService.FileExtensions;
-
-namespace TrtParserService.FileReader
+﻿namespace TrtParserService.FileReader
 {
     public class LocalFileReader : IFileReader
     {

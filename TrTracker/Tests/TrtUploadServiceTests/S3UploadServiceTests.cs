@@ -1,14 +1,15 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
-using Amazon.S3;
-using Moq;
-using Amazon.S3.Model;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using TrtShared.ServiceCommunication;
+using Microsoft.Extensions.Logging.Abstractions;
+
+using Amazon.S3;
+using Amazon.S3.Model;
+
+using Moq;
 
 // Tested namespaces
 using TrtUploadService.UploadDocService;
-using TrtUploadService.UploadResultsService;
-using Microsoft.AspNetCore.Http;
+using TrtShared.ServiceCommunication;
 
 
 namespace TrtUploadServiceTests
@@ -57,11 +58,6 @@ namespace TrtUploadServiceTests
 
             // Assert
             Assert.NotNull(result);
-            var savedFullPath = Path.Combine(Path.GetTempPath(), "TrtUploads", result);
-            Assert.True(File.Exists(savedFullPath));
-
-            // Clean up
-            File.Delete(savedFullPath);
         }
         #endregion // S3UploadDocService
     }

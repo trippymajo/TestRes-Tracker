@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using StackExchange.Redis;
+
 using TrtShared.DTO;
 using TrtShared.ServiceCommunication;
 

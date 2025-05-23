@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StackExchange.Redis;
+
 using TrtShared.ServiceCommunication;
 using TrtUploadService.UploadResultsService;
 using TrtUploadService.UploadDocService;

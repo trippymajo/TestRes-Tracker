@@ -1,11 +1,4 @@
-﻿using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TrtParserService.FileReader
+﻿namespace TrtParserService.FileReader
 {
     public interface IFileReader
     {

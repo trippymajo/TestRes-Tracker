@@ -1,10 +1,11 @@
-using TrtParserService.FileExtensions;
 using StackExchange.Redis;
-using TrtShared.ServiceCommunication;
-using TrtParserService.ResultTransport;
 using Microsoft.Extensions.Options;
-using TrtParserService.FileReader;
 using Amazon.S3;
+
+using TrtShared.ServiceCommunication;
+using TrtParserService.FileExtensions;
+using TrtParserService.ResultTransport;
+using TrtParserService.FileReader;
 
 namespace TrtParserService
 {

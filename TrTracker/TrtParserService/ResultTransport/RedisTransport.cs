@@ -1,15 +1,8 @@
-﻿using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using TrtShared.DTO;
+﻿using System.Threading.Channels;
+
+using StackExchange.Redis;
+
 using TrtShared.ServiceCommunication;
-using System.Threading.Channels;
 
 namespace TrtParserService.ResultTransport
 {

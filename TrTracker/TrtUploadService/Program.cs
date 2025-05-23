@@ -1,10 +1,11 @@
-using TrtUploadService.UploadDocService;
 using StackExchange.Redis;
+using Microsoft.Extensions.Options;
+using Amazon.S3;
+
+using TrtUploadService.UploadDocService;
 using TrtUploadService.ResultTransport;
 using TrtUploadService.UploadResultsService;
 using TrtShared.ServiceCommunication;
-using Microsoft.Extensions.Options;
-using Amazon.S3;
 
 namespace TrtUploadService
 {

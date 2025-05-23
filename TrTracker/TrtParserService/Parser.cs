@@ -1,7 +1,9 @@
-using TrtParserService.FileExtensions;
-using TrtShared.DTO;
 using Newtonsoft.Json;
+
+using TrtShared.DTO;
 using TrtShared.ServiceCommunication;
+
+using TrtParserService.FileExtensions;
 using TrtParserService.FileReader;
 
 namespace TrtParserService
