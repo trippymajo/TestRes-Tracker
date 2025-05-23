@@ -42,7 +42,7 @@ namespace UploadService
         }
         #endregion // LocalUploadDocService
 
-
+        #region ApiUploadResultsService
         [Fact]
         public async Task PushResultsToDb_ValidFile_SuccessStatusCode()
         {
@@ -51,6 +51,7 @@ namespace UploadService
             mockHttp.When("http://localhost/api/UploadResults")
                     .Respond(System.Net.HttpStatusCode.OK);
             var client = mockHttp.ToHttpClient();
+            client.BaseAddress = new Uri("http://localhost");
 
             // Init
             var fakeLogger = NullLogger<ApiUploadResultsService>.Instance;
@@ -84,5 +85,6 @@ namespace UploadService
             // Assert
             Assert.True(retVal);
         }
+        #endregion // ApiUploadResultsService
     }
 }

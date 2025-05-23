@@ -34,11 +34,11 @@ namespace TrtParserService
                 });
 
                 // TODO
-                //builder.Services.AddScoped<IFileReader, LocalFileReader>();
+                builder.Services.AddSingleton<IFileReader, S3FileReader>();
             }
             else
             {
-                builder.Services.AddScoped<IFileReader, LocalFileReader>();
+                builder.Services.AddSingleton<IFileReader, LocalFileReader>();
             }
 
                 builder.Services.AddSingleton<TrxParser>();
