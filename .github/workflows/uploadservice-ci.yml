@@ -39,10 +39,10 @@ jobs:
           dotnet-version: 9.0.x
       
       - name: Restore dependencies
-        run: dotnet restore ./TrTracker/TrtUploadService/UploadService.csproj
+        run: dotnet restore ./TrTracker/TrtUploadService/TrtUploadService.csproj
         
       - name: Build
-        run: dotnet build ./TrTracker/TrtUploadService/UploadService.csproj --no-restore
+        run: dotnet build ./TrTracker/TrtUploadService/TrtUploadService.csproj --no-restore
         
       - name: Test
         run: dotnet test ./TrTracker/Tests/TrtUploadServiceTests/TrtUploadServiceTests.csproj --no-build --verbosity normal
