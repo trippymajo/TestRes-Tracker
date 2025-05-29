@@ -48,7 +48,7 @@ namespace TrtUploadServiceTests
             };
 
             // Act
-            var retVal = await uploadService.PushResultsToDb(testRunDTO);
+            var retVal = await uploadService.PushResultsToDbAsync(testRunDTO);
 
             // Assert
             Assert.True(retVal);

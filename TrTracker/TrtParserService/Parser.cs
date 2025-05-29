@@ -29,7 +29,7 @@ namespace TrtParserService
         /// </summary>
         /// <param name="fullFilePath">Full file path of parsed item</param>
         /// <returns>TestRunDTO for transfering data to DB</returns>
-        private async Task<TestRunDTO?> ParseProc(string fullFilePath)
+        private async Task<TestRunDTO?> ParseProcAsync(string fullFilePath)
         {
             var parser = _parserFactory.Create(fullFilePath);
             if (parser == null)
@@ -40,7 +40,7 @@ namespace TrtParserService
 
             using var streamFile = await _fileReader.OpenFileStreamAsync(fullFilePath);
 
-            var testRunResultDto = await parser.Parse(streamFile, "TODO:BRANCH", "TODO:VERSION");
+            var testRunResultDto = await parser.ParseAsync(streamFile, "TODO:BRANCH", "TODO:VERSION");
             if (testRunResultDto == null)
             {
                 _logger.LogError("No DTO been created due parse error");
@@ -56,7 +56,7 @@ namespace TrtParserService
             {
                 try
                 {
-                    var dto = await ParseProc(fullFilePath);
+                    var dto = await ParseProcAsync(fullFilePath);
 
                     if (dto == null)
                         _logger.LogError("DTO was not formed after parsing");

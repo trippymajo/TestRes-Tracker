@@ -94,7 +94,7 @@ namespace TrtParserService.FileExtensions
             return unitTestResults;
         }
 
-        public async Task<TestRunDTO?> Parse(Stream? streamFile, string branch, string version)
+        public async Task<TestRunDTO?> ParseAsync(Stream? streamFile, string branch, string version)
         {
             if (streamFile == null)
             {
@@ -133,8 +133,8 @@ namespace TrtParserService.FileExtensions
                 //    );
 
                 // Parse Trx file.
-                date = ParseDate() ?? DateTime.UtcNow;
-                results = ParseResults();
+                date = await Task.Run(() => ParseDate()) ?? DateTime.UtcNow;
+                results = await Task.Run(() => ParseResults());
                 // branch = do something to get branch name
                 // version = do something to get version
             }

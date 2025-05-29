@@ -12,6 +12,6 @@ namespace TrtUploadService.UploadResultsService
         /// [true] - Success
         /// [false] - Something went wrong
         /// </returns>
-        public Task<bool> PushResultsToDb(TestRunDTO dto);
+        public Task<bool> PushResultsToDbAsync(TestRunDTO dto);
     }
 }

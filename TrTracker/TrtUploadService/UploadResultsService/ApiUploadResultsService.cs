@@ -13,7 +13,7 @@ namespace TrtUploadService.UploadResultsService
             _logger = logger;
         }
 
-        public async Task<bool> PushResultsToDb(TestRunDTO dto)
+        public async Task<bool> PushResultsToDbAsync(TestRunDTO dto)
         {
             try
             {

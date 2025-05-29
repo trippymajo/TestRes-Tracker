@@ -72,11 +72,11 @@ namespace TrtApiService.Controllers
                 branch.Name = strNewName;
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 return StatusCode(500, "Failed to update the branch. Database error.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Failed to rename the branch");
             }

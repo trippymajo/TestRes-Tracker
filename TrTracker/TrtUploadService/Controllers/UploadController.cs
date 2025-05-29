@@ -70,7 +70,7 @@ namespace TrtApiService.Controllers
             if (parsedDto == null)
                 return StatusCode(500, "ParserService returned null or failed");
 
-            var result = await _uploadResults.PushResultsToDb(parsedDto);
+            var result = await _uploadResults.PushResultsToDbAsync(parsedDto);
             if (!result)
                 return StatusCode(500, "Failed to save TestRun to database");
 
