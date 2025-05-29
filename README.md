@@ -5,7 +5,8 @@ The architecture is easily adaptable for integration into any QA department work
 Currently, microservices communicate with each other via Redis pub/sub and HTTP.
 
 ### Build statuses
-![UploadService CI](https://github.com/trippymajo/TestRes-Tracker/actions/workflows/uploadservice-ci.yml/badge.svg)
+![UploadService CI](https://github.com/trippymajo/TestRes-Tracker/actions/workflows/uploadservice-ci.yml/badge.svg)  
+![UploadService CI](https://github.com/trippymajo/TestRes-Tracker/actions/workflows/parserservice-ci.yml/badge.svg)
 
 ## Architecture
 ![Architecture](./TestRes-Tracker-Architecture.png)
