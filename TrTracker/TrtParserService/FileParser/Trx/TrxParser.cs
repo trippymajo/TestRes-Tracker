@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using Amazon.S3.Model;
+using System.Xml;
 using System.Xml.Linq;
 
 using TrtShared.DTO;
@@ -9,11 +10,23 @@ namespace TrtParserService.FileExtensions
     {
         private readonly ILogger<TrxParser> _logger;
         private XDocument? _xDoc;
+        private XNamespace? _xNamespace;
 
         public TrxParser(ILogger<TrxParser> logger)
         {
             _logger = logger;
             _xDoc = new XDocument();
+            _xNamespace = null;
+        }
+
+        /// <summary>
+        /// Makes a full element name with current default namespace
+        /// </summary>
+        /// <param name="elemName">Element name</param>
+        /// <returns>Full XName for the element</returns>
+        private XName ElementNSName(string elemName)
+        {
+            return (_xNamespace == null || _xNamespace == XNamespace.None) ? (XName)elemName : _xNamespace + elemName;
         }
 
         public DateTime? ParseDate()
@@ -29,7 +42,7 @@ namespace TrtParserService.FileExtensions
             //   start="2025-04-16T16:16:33.2320172+03:00"
             //   finish="2025-04-16T23:54:05.470844+03:00" />
             var timeFinish = _xDoc.Root?
-                .Element("Times")?
+                .Element(ElementNSName("Times"))?
                 .Attribute("finish")?.Value;
 
             DateTime? retVal = null;
@@ -51,7 +64,7 @@ namespace TrtParserService.FileExtensions
             // duration="00:00:31.8927852" startTime="2025-04-16T16:58:54.3104569+03:00"
             // endTime="2025-04-16T16:59:26.2166433+03:00" testType="123"
             // outcome="Passed" testListId="123" relativeResultsDirectory="111">
-            var unitTestResult = _xDoc.Descendants("UnitTestResult")
+            var unitTestResults = _xDoc.Descendants(ElementNSName("UnitTestResult"))
                 .Where(utr => utr.Attribute("testName") != null && utr.Attribute("outcome") != null)
                 .ToDictionary
                 (
@@ -59,22 +72,42 @@ namespace TrtParserService.FileExtensions
                     utr =>
                     (
                         outcome: utr.Attribute("outcome")?.Value!,
-                        error: utr.Element("Output")?
-                            .Element("ErrorInfo")?
-                            .Element("Message")?.Value
+                        error: utr.Element(ElementNSName("Output"))?
+                            .Element(ElementNSName("ErrorInfo"))?
+                            .Element(ElementNSName("Message"))?.Value
                     )
                 );
 
-            return unitTestResult;
+            // For debug and testing, then clear this trash....
+            //var xmlNS = _xDoc.Root?.GetDefaultNamespace();
+            //var allResults = _xDoc.Descendants(ElementNSName("UnitTestResult")).ToList();
+            //var listFiltered = allResults.Where(utr => utr.Attribute("testName") != null && utr.Attribute("outcome") != null).ToList();
+            //var dictOut = listFiltered.ToDictionary(
+            //    utr => utr.Attribute("testName")?.Value!,
+            //    utr => (
+            //        outcome: utr.Attribute("outcome")?.Value!,
+            //        error: utr.Element(ElementNSName("Output"))?
+            //            .Element(ElementNSName("ErrorInfo"))?
+            //            .Element(ElementNSName("Message"))?.Value
+            //    )
+            //);
+
+            return unitTestResults;
         }
 
         public async Task<TestRunDTO?> Parse(Stream? streamFile, string branch, string version)
         {
-            if (streamFile is null)
+            if (streamFile == null)
             {
                 _logger.LogWarning("Parse failed. File stream is null");
                 return null;
             }
+
+            // Parse products:
+            DateTime date = DateTime.UtcNow;
+            IDictionary<string, (string outcome, string? error)>? results = null;
+            //string? branch = null;
+            //string? version = null;
 
             // Avoid XML injections
             var settings = new XmlReaderSettings
@@ -84,24 +117,33 @@ namespace TrtParserService.FileExtensions
                 Async = true
             };
 
-            using var reader = XmlReader.Create(streamFile, settings);
-            _xDoc = await XDocument.LoadAsync(reader, LoadOptions.None, CancellationToken.None);
+            try
+            {
+                using var reader = XmlReader.Create(streamFile, settings);
+                _xDoc = await XDocument.LoadAsync(reader, LoadOptions.None, CancellationToken.None);
+                _xNamespace = _xDoc.Root?.GetDefaultNamespace();
 
-            //// Get UnitTest info
-            ////  <UnitTest name="Test123" storage="path" id="123">
-            //var unitTests = _xDoc.Descendants("UnitTest")
-            //    .Where(ut => ut.Attribute("id") != null && ut.Attribute("name") != null)
-            //    .ToDictionary
-            //    (
-            //        ut => ut.Attribute("id")?.Value!,
-            //        ut => ut.Attribute("name")?.Value!
-            //    );
+                //// Get UnitTest info
+                ////  <UnitTest name="Test123" storage="path" id="123">
+                //var unitTests = _xDoc.Descendants("UnitTest")
+                //    .Where(ut => ut.Attribute("id") != null && ut.Attribute("name") != null)
+                //    .ToDictionary
+                //    (
+                //        ut => ut.Attribute("id")?.Value!,
+                //        ut => ut.Attribute("name")?.Value!
+                //    );
 
-            // Parse Trx file.
-            var date = ParseDate() ?? DateTime.UtcNow;
-            var results = ParseResults();
-            // var branch = do something to get branch name
-            // var version = do something to get version
+                // Parse Trx file.
+                date = ParseDate() ?? DateTime.UtcNow;
+                results = ParseResults();
+                // branch = do something to get branch name
+                // version = do something to get version
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Parse failed. Cannot read stream of document to parse");
+                return null;
+            }
 
             if (results == null)
             {
@@ -124,7 +166,6 @@ namespace TrtParserService.FileExtensions
                 Date = date,
                 Results = resultDtos
             };
-
 
             return testRunDto;
         }
