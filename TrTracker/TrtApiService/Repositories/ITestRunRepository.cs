@@ -6,7 +6,7 @@
 //    /// <summary>
 //    /// Repository pattern to work with TestRun table in DB.
 //    /// </summary>
-//    public interface ITestRunRepository : IRepository<Testrun>
+//    public interface ITestrunRepository : IRepository<Testrun>
 //    {
 //        //Task DeleteTestRunAsync(); // DELETE
 //        //Task RenameTestRunAsync( , string newName); // UPDATE

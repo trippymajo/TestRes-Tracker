@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TrtApiService.Data;
 using TrtApiService.Models;
 

@@ -1,7 +1,4 @@
-﻿using Humanizer;
-using Microsoft.EntityFrameworkCore;
-using TrtApiService.Data;
-using TrtApiService.Models;
+﻿using TrtApiService.Data;
 
 namespace TrtApiService.Repositories.EfCore
 {
