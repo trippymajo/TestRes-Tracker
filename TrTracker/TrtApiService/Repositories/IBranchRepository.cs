@@ -15,7 +15,7 @@ namespace TrtApiService.Repositories
         /// Reference to just created Branch.
         /// [null] - Branch already exists or the problem occured
         /// </returns>
-        Task<Branch?> CreateNewAsync(string branchName);
+        Task<Branch> CreateNewAsync(string branchName);
 
         /// <summary>
         /// CREATE/READ. Creates new branch or gets branch from DB.
@@ -23,6 +23,13 @@ namespace TrtApiService.Repositories
         /// <param name="branchName">Name of the branch to get/create</param>
         /// <returns>Reference to just created Branch</returns>
         Task<Branch> GetOrCreateAsync(string branchName);
+
+        /// <summary>
+        /// CREATE/READ. Creates new branch or gets branch from DB.
+        /// </summary>
+        /// <param name="entity">Branch to get/create</param>
+        /// <returns>Reference to just created Branch</returns>
+        Task<Branch> GetOrCreateAsync(Branch entity);
 
         //Task DeleteBranchAsync(); // DELETE
         //Task RenameBranchAsync(string branchName, string newName); // UPDATE

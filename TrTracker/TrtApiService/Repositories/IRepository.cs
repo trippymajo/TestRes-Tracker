@@ -15,13 +15,6 @@
         /// </returns>
         Task<T> CreateAsync(T entity);
 
-        /// <summary>
-        /// CREATE/READ. Creates new item or gets item from DB.
-        /// </summary>
-        /// <param name="entity">Entity to get/create</param>
-        /// <returns>Reference to just created entity</returns>
-        Task<T> GetOrCreateAsync(T entity);
-
         //Task DeleteBranchAsync(); // DELETE
         //ask RenameBranchAsync( , string newName); // UPDATE
         //Task<Branch> ReadAllBranchNames(); // READ
