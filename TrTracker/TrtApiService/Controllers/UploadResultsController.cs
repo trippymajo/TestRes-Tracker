@@ -127,7 +127,7 @@ namespace TrtApiService.Controllers
         /// <param name="dto">Data to put in to DB</param>
         /// <returns>Http result of the operation</returns>
         [HttpPost]
-        public async Task<IActionResult> UploadTestRun([FromBody] TestRunDTO dto)
+        public async Task<IActionResult> UploadResultsAsync([FromBody] TestRunDTO dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.Branch)
                 || string.IsNullOrWhiteSpace(dto.Version))

@@ -10,6 +10,7 @@ namespace TrtApiService.Models
         [Required]
         public string Version { get; set; } = string.Empty;
 
+        [Required]
         [DataType(DataType.Date)] // TODO: need to think globally
         public DateTime Date { get; set; }
 
