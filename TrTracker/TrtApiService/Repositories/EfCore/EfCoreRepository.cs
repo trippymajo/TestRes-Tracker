@@ -19,5 +19,10 @@ namespace TrtApiService.Repositories.EfCore
             await _context.Set<T>().AddAsync(entity);
             return entity;
         }
+
+        public async Task CreateAsync(IEnumerable<T> entities)
+        {
+            await _context.AddRangeAsync(entities);
+        }
     }
 }

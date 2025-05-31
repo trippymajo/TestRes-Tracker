@@ -8,7 +8,7 @@ namespace TrtApiService.Repositories
     public interface ITestRepository : IRepository<Test>
     {
         /// <summary>
-        /// CREATE. Creates new test item in test table in DB
+        /// CREATE. Creates new sigle test item in test table in DB
         /// </summary>
         /// <param name="testName">Name of the test to put</param>
         /// <param name="testDesc">Description of the test to put</param>
@@ -18,11 +18,18 @@ namespace TrtApiService.Repositories
         Task<Test> CreateNewAsync(string testName, string? testDesc = null);
 
         /// <summary>
-        /// CREATE/READ. Creates new branch or gets branch from DB.
+        /// CREATE/READ. Creates new single test or gets test from DB.
         /// </summary>
-        /// <param name="branchName">Name of the branch to get/create</param>
-        /// <returns>Reference to just created Branch</returns>
+        /// <param name="testName">Name of the test to get/create</param>
+        /// <returns>Reference to just created test</returns>
         Task<Test> GetOrCreateAsync(string testName);
+
+        /// <summary>
+        /// CREATE/READ. Creates new single test or gets test from DB.
+        /// </summary>
+        /// <param name="entity">Test entity to get/create</param>
+        /// <returns>Reference to just created test</returns>
+        Task<Test> GetOrCreateAsync(Test entity);
 
         //Task DeleteBranchAsync(); // DELETE
         //Task RenameBranchAsync(string branchName, string newName); // UPDATE

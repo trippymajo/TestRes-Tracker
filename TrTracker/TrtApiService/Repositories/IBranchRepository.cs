@@ -8,7 +8,7 @@ namespace TrtApiService.Repositories
     public interface IBranchRepository : IRepository<Branch>
     {
         /// <summary>
-        /// CREATE. Creates new branch in Branch table in DB
+        /// CREATE. Creates new single branch in Branch table in DB
         /// </summary>
         /// <param name="branchName">Name of the branch to put</param>
         /// <returns>
@@ -18,14 +18,14 @@ namespace TrtApiService.Repositories
         Task<Branch> CreateNewAsync(string branchName);
 
         /// <summary>
-        /// CREATE/READ. Creates new branch or gets branch from DB.
+        /// CREATE/READ. Creates new signle branch or gets branch from DB.
         /// </summary>
         /// <param name="branchName">Name of the branch to get/create</param>
         /// <returns>Reference to just created Branch</returns>
         Task<Branch> GetOrCreateAsync(string branchName);
 
         /// <summary>
-        /// CREATE/READ. Creates new branch or gets branch from DB.
+        /// CREATE/READ. Creates new single branch or gets branch from DB.
         /// </summary>
         /// <param name="entity">Branch to get/create</param>
         /// <returns>Reference to just created Branch</returns>

@@ -6,7 +6,7 @@
     public interface IRepository<T> where T : class
     {
         /// <summary>
-        /// CREATE. Creates new item in item table in DB
+        /// CREATE. Creates single new item in item table in DB
         /// </summary>
         /// <param name="entity">Entity to add</param>
         /// <returns>
@@ -14,6 +14,12 @@
         /// [null] - Entity already exists or the problem occured
         /// </returns>
         Task<T> CreateAsync(T entity);
+
+        /// <summary>
+        /// CREATE. Creates batched new items in item table in DB
+        /// </summary>
+        /// <param name="entities">Entities to add</param>
+        Task CreateAsync(IEnumerable<T> entities);
 
         //Task DeleteBranchAsync(); // DELETE
         //ask RenameBranchAsync( , string newName); // UPDATE
