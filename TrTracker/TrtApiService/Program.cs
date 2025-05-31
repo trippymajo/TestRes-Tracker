@@ -9,8 +9,6 @@ namespace TsrUploadService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
             builder.Services.AddDbContext<TrtDbContext>(options =>
                            options.UseNpgsql(builder.Configuration.GetConnectionString("TrtDbContext")
@@ -23,9 +21,11 @@ namespace TsrUploadService
                 });
             });
 
+            #region SWAGGER
             // Say we are gay gamers exloring reality aka SWAGGER
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            #endregion // SWAGGER
 
             var app = builder.Build();
 
