@@ -8,11 +8,20 @@ namespace TrtApiService.Repositories.EfCore
     {
         public EfCoreTestRepository(TrtDbContext context) : base(context) { }
 
-        public async Task<Test> CreateNewAsync(string testName, string? testDesc)
+        public async Task<Test> CreateAsync(string testName, string? testDesc)
         {
             var test = new Test { Name = testName, Description = testDesc };
             await _context.Tests.AddAsync(test);
             return test;
+        }
+
+        public async Task CreateAsync(IEnumerable<string> testNames)
+        {
+            var tests = testNames
+                .Select(tn => new Test { Name = tn })
+                .ToList();
+
+            await _context.AddRangeAsync(tests);
         }
 
         public async Task<Test> GetOrCreateAsync(string testName)

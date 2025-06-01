@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TrtApiService.Data;
+using TrtApiService.Repositories;
+using TrtApiService.Repositories.EfCore;
 
 namespace TsrUploadService
 {
@@ -9,10 +11,19 @@ namespace TsrUploadService
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            #region APISERVICE
             builder.Services.AddControllers();
+
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(EfCoreRepository<>));
+            builder.Services.AddScoped<IBranchRepository, EfCoreBranchRepository>();
+            builder.Services.AddScoped<IResultRepository, EfCoreResultRepository>();
+            builder.Services.AddScoped<ITestRepository, EfCoreTestRepository>();
+            builder.Services.AddScoped<ITestrunRepository, EfCoreTestrunRepository>();
+
             builder.Services.AddDbContext<TrtDbContext>(options =>
                            options.UseNpgsql(builder.Configuration.GetConnectionString("TrtDbContext")
                            ?? throw new InvalidOperationException("Connection string 'TrtDbContext' not found.")));
+
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("ManageBranches", policy =>
@@ -20,6 +31,7 @@ namespace TsrUploadService
                     policy.RequireClaim("role", "admin");
                 });
             });
+            #endregion // APISERVICE
 
             #region SWAGGER
             // Say we are gay gamers exloring reality aka SWAGGER

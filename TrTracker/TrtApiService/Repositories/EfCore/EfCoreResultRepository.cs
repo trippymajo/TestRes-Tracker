@@ -3,7 +3,7 @@ using TrtApiService.Models;
 
 namespace TrtApiService.Repositories.EfCore
 {
-    public class EfCoreResultRepository : EfCoreRepository<Result> //, IResultRepository
+    public class EfCoreResultRepository : EfCoreRepository<Result>, IResultRepository
     {
         public EfCoreResultRepository(TrtDbContext context) : base(context) { }
     }

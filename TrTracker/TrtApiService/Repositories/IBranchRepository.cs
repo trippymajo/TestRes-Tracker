@@ -15,7 +15,7 @@ namespace TrtApiService.Repositories
         /// Reference to just created Branch.
         /// [null] - Branch already exists or the problem occured
         /// </returns>
-        Task<Branch> CreateNewAsync(string branchName);
+        Task<Branch> CreateAsync(string branchName);
 
         /// <summary>
         /// CREATE/READ. Creates new signle branch or gets branch from DB.

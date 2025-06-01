@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using TrtApiService.Data;
 using TrtApiService.Models;
+using TrtApiService.Repositories;
 using TrtShared.DTO;
 
 namespace TrtApiService.Controllers
@@ -11,25 +13,23 @@ namespace TrtApiService.Controllers
     public class UploadResultsController : ControllerBase
     {
         private readonly TrtDbContext _context;
+        private readonly ILogger _logger;
+        private readonly IBranchRepository _branch;
+        private readonly IResultRepository _result;
+        private readonly ITestRepository _test;
+        private readonly ITestrunRepository _testrun;
 
         // Default Constructor
-        public UploadResultsController(TrtDbContext context)
+        public UploadResultsController(TrtDbContext context, ILogger<UploadResultsController> logger,
+            IBranchRepository branch, IResultRepository result,
+            ITestRepository test, ITestrunRepository testrun)
         {
             _context = context;
-        }
-
-        private async Task AddResults(TestRunDTO dto, Testrun testRun, IDictionary<string, Test> testsDic)
-        {
-            var results = dto.Results
-                .Select(r => new Result
-                {
-                    Outcome = r.Outcome,
-                    ErrMsg = r.ErrMsg,
-                    TestrunId = testRun.Id,
-                    TestId = testsDic[r.TestName].Id
-                }).ToList();
-
-            await _context.Results.AddRangeAsync(results);
+            _logger = logger;
+            _branch = branch;
+            _result = result;
+            _test = test;
+            _testrun = testrun;
         }
 
         /// <summary>
@@ -103,11 +103,11 @@ namespace TrtApiService.Controllers
         }
 
         /// <summary>
-        /// Gets curent dto's dictionary from DB
+        /// Gets list of new Test names from TestRun DTO
         /// </summary>
-        /// <param name="dto">Data to put in to DB</param>
-        /// <returns>Dictionary of tests in Db</returns>
-        private async Task<IDictionary<string, Test>> GetCurTestsDic(TestRunDTO dto)
+        /// <param name="dto">DTO to get information from</param>
+        /// <returns>List of new tests from Dto</returns>
+        private async Task<IList<Test>> GetNewTestNamesListFromDto(TestRunDTO dto)
         {
             // Dto list of testNames
             var dtoTestsList = dto.Results
@@ -115,9 +115,69 @@ namespace TrtApiService.Controllers
                 .Distinct()
                 .ToList();
 
-            return await _context.Tests
+            // DB testNames which matches dto names list
+            var dbTestsList = await _context.Tests
                 .Where(t => dtoTestsList.Contains(t.Name))
-                .ToDictionaryAsync(t => t.Name, t => t);
+                .Select(t => t.Name)
+                .ToListAsync();
+
+            // Only just new tests
+            var newTests = dbTestsList
+                .Where(name => !dbTestsList.Contains(name))
+                .Select(name => new Test { Name = name })
+                .ToList();
+
+            return newTests;
+        }
+
+        /// <summary>
+        /// Gets current TestRun model item from TestRunDto
+        /// </summary>
+        /// <param name="dto">TestRunDTO to make an item from</param>
+        /// <param name="branch">Branch of current testrun</param>
+        /// <returns>TestRun Model</returns>
+        private Testrun GetTestrunFromDto(TestRunDTO dto, Branch branch)
+        {
+            var testrun = new Testrun
+            {
+                Version = dto.Version,
+                Date = dto.Date,
+                BranchId = branch.Id,
+            };
+
+            return testrun;
+        }
+
+        /// <summary>
+        /// Gets curent dto's dictionary from DB
+        /// </summary>
+        /// <param name="dto">TestRun </param>
+        /// <returns>Dictionary of tests in Db</returns>
+        private async Task<IDictionary<string, int>> GetCurTestsDic(TestRunDTO dto)
+        {
+            // Dto's list of testNames
+            var testNamesList = dto.Results
+                .Select(r => r.TestName)
+                .Distinct()
+                .ToList();
+
+            return await _context.Tests
+                .Where(t => testNamesList.Contains(t.Name))
+                .ToDictionaryAsync(t => t.Name, t => t.Id);
+        }
+
+        private IList<Result> GetResultsListFromDto(TestRunDTO dto, Testrun testRun, IDictionary<string, int> testsDic)
+        {
+            var results = dto.Results
+                .Select(r => new Result
+                {
+                    Outcome = r.Outcome,
+                    ErrMsg = r.ErrMsg,
+                    TestrunId = testRun.Id,
+                    TestId = testsDic[r.TestName]
+                }).ToList();
+
+            return results;
         }
 
         /// <summary>
@@ -129,9 +189,12 @@ namespace TrtApiService.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadResultsAsync([FromBody] TestRunDTO dto)
         {
-            if (dto == null || string.IsNullOrWhiteSpace(dto.Branch)
+            if (dto == null 
+                || dto.Results.Any() == false 
+                || string.IsNullOrWhiteSpace(dto.Branch)
                 || string.IsNullOrWhiteSpace(dto.Version))
             {
+                _logger.LogError("Results data is invalid");
                 return BadRequest("Invalid data");
             }
 
@@ -141,24 +204,25 @@ namespace TrtApiService.Controllers
             try
             {
                 // Branch processing
-                var branch = await AddNewBranch(dto);
+                var branch = await _branch.GetOrCreateAsync(dto.Branch);
 
                 // Test processing
-                await AddNewTests(dto);
+                await _test.CreateAsync(await GetNewTestNamesListFromDto(dto));
 
                 // TestRun processing
-                var testRun = await AddTestRun(dto, branch);
+                var testRun = await _testrun.CreateAsync(GetTestrunFromDto(dto, branch));
                 testRunId = testRun.Id;
 
                 // Results processing
-                var testDic = await GetCurTestsDic(dto);
-                await AddResults(dto, testRun, testDic);
+                var testsDic = await GetCurTestsDic(dto);
+                await _result.CreateAsync(GetResultsListFromDto(dto, testRun, testsDic));
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to process results uploading");
                 await transaction.RollbackAsync();
                 return StatusCode(500, "Failed to process testRun upload");
             }

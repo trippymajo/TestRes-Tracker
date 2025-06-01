@@ -8,7 +8,7 @@ namespace TrtApiService.Repositories.EfCore
     {
         public EfCoreBranchRepository(TrtDbContext context) : base(context) { }
 
-        public async Task<Branch> CreateNewAsync(string branchName)
+        public async Task<Branch> CreateAsync(string branchName)
         {
             var branch = new Branch { Name = branchName };
             await _context.Branches.AddAsync(branch);
