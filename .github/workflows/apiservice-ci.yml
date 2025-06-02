@@ -1,0 +1,49 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: TRT ApiService CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+        - '**/*.md'
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+        - '**/*.md'
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    env:           
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      CONNECTIONSTRINGS__TRTDBCONTEXT: ${{ sercrets.CONNECTIONSTRINGS__TRTDBCONTEXT }}
+    
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+          
+    steps:
+      - uses: actions/checkout@v4
+  
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      
+      - name: Restore dependencies
+        run: dotnet restore ./TrTracker/TrtParserService/TrtParserService.csproj
+        
+      - name: Build
+        run: dotnet build ./TrTracker/TrtParserService/TrtParserService.csproj --no-restore
+
+      #  TODO tests
+      #- name: Test
+      #  run: dotnet test ./TrTracker/TrtParserService/TrtParserService.csproj --no-build --verbosity normal
