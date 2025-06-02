@@ -10,6 +10,7 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
 
 ## Architecture
 ![Architecture](./TestRes-Tracker-Architecture.png)
+![DB Architecture](./TestRes-Tracker-DB.PNG)
 
 ## Projects
 - **TrtUploadService** - Receives test result files via POST, saves them to storage, triggers parsing, and then pushes results to the DB via ApiService.
