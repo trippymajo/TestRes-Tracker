@@ -6,7 +6,8 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
 
 ### Build statuses
 ![UploadService CI](https://github.com/trippymajo/TestRes-Tracker/actions/workflows/uploadservice-ci.yml/badge.svg)  
-![UploadService CI](https://github.com/trippymajo/TestRes-Tracker/actions/workflows/parserservice-ci.yml/badge.svg)
+![ParserService CI](https://github.com/trippymajo/TestRes-Tracker/actions/workflows/parserservice-ci.yml/badge.svg)  
+![ApiService CI](https://github.com/trippymajo/TestRes-Tracker/actions/workflows/apiservice-ci.yml/badge.svg)
 
 ## Architecture
 ![Architecture](./TestRes-Tracker-Architecture.png)
