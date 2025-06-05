@@ -17,6 +17,10 @@ namespace TrtUploadService
 
             builder.Services.AddControllers();
 
+            #region Validator
+            builder.Services.AddScoped<ValidateFileService>();
+            #endregion
+
             #region UPLOAD_SERVICE
             var storageProvider = builder.Configuration["UploadService:StorageProvider"];
             if (storageProvider == "S3Aws")

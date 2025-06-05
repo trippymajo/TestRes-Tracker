@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using TrtShared.ServiceCommunication;
+using TrtUploadService;
 using TrtUploadService.UploadResultsService;
 using TrtUploadService.UploadDocService;
 
@@ -10,14 +11,16 @@ namespace TrtApiService.Controllers
     [Route("[controller]")]
     public class UploadController : Controller
     {
-        private static readonly HashSet<string> AllowedExtensions = [".trx"];
+        private readonly ValidateFileService _validator;
         private readonly IUploadDocService _uploadDoc;
         private readonly IUploadResultsService _uploadResults;
         private readonly IUploadTransport _resultTransport;
         private readonly ILogger<UploadController> _logger;
 
-        public UploadController(IUploadDocService uploadDoc, IUploadResultsService uploadResults, IUploadTransport resultTransport, ILogger<UploadController> logger)
+        public UploadController(IUploadDocService uploadDoc, IUploadResultsService uploadResults,
+            IUploadTransport resultTransport, ValidateFileService validator, ILogger<UploadController> logger)
         {
+            _validator = validator;
             _uploadDoc = uploadDoc;
             _uploadResults = uploadResults;
             _resultTransport = resultTransport;
@@ -32,23 +35,23 @@ namespace TrtApiService.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadDoc(IFormFile file)
         {
-            if (file == null)
-            {
-                _logger.LogWarning("Uploading doc failed! Incoming file is nul");
-                return BadRequest("File is null");
-            }
+            var validationResult = _validator.Validate(file);
 
-            if (file.Length > 50 * 1024 * 1024)
+            switch (validationResult.Error)
             {
-                _logger.LogWarning("Uploading doc failed! Incoming file is more than 50 MB");
-                return StatusCode(413);
-            }
+                case FileValidationError.None: break;
 
-            var fileExt = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (string.IsNullOrEmpty(fileExt) || !AllowedExtensions.Contains(fileExt))
-            {
-                _logger.LogWarning("Uploading doc failed! Incoming file's extension is empty");
-                return BadRequest("Unsuported file extension!");
+                case FileValidationError.Null:
+                    _logger.LogWarning("Uploading doc failed! Incoming file is nul");
+                    return BadRequest("File is null");
+
+                case FileValidationError.TooLarge:
+                    _logger.LogWarning("Uploading doc failed! Incoming file is more than 50 MB");
+                    return StatusCode(413);
+
+                case FileValidationError.BadExtension:
+                    _logger.LogWarning("Uploading doc failed! Incoming file's extension is empty");
+                    return BadRequest("Unsuported file extension!");
             }
 
             var fullFilePath = await _uploadDoc.SaveFileAsync(file);
