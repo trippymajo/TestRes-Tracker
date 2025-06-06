@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="FileParser\" />
+    <Folder Include="App\" />
+    <Folder Include="Implementation\" />
+    <Folder Include="ParserCore\" />
   </ItemGroup>
 
   <ItemGroup>
