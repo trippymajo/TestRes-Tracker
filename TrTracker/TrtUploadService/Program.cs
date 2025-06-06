@@ -4,10 +4,12 @@ using Amazon.S3;
 
 using TrtUploadService.App.UploadDocService;
 using TrtUploadService.App.UploadResultsService;
+using TrtUploadService.App.ValidatorService;
 
 using TrtUploadService.Implementation.ResultTransport;
 using TrtUploadService.Implementation.UploadDocService;
 using TrtUploadService.Implementation.UploadResultsService;
+using TrtUploadService.Implementation.ValidatorService;
 
 using TrtShared.ServiceCommunication;
 
@@ -22,7 +24,7 @@ namespace TrtUploadService
             builder.Services.AddControllers();
 
             #region Validator
-            builder.Services.AddScoped<ValidateFileService>();
+            builder.Services.AddScoped<IValidatorService, ValidatorService>();
             #endregion
 
             #region UPLOAD_SERVICE

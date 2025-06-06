@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using TrtShared.ServiceCommunication;
-using TrtUploadService;
 using TrtUploadService.App.UploadResultsService;
 using TrtUploadService.App.UploadDocService;
+using TrtUploadService.App.ValidatorService;
 
 namespace TrtApiService.Controllers
 {
@@ -11,14 +11,14 @@ namespace TrtApiService.Controllers
     [Route("[controller]")]
     public class UploadController : Controller
     {
-        private readonly ValidateFileService _validator;
+        private readonly IValidatorService _validator;
         private readonly IUploadDocService _uploadDoc;
         private readonly IUploadResultsService _uploadResults;
         private readonly IUploadTransport _resultTransport;
         private readonly ILogger<UploadController> _logger;
 
         public UploadController(IUploadDocService uploadDoc, IUploadResultsService uploadResults,
-            IUploadTransport resultTransport, ValidateFileService validator, ILogger<UploadController> logger)
+            IUploadTransport resultTransport, IValidatorService validator, ILogger<UploadController> logger)
         {
             _validator = validator;
             _uploadDoc = uploadDoc;
