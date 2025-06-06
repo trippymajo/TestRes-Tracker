@@ -1,4 +1,6 @@
-﻿namespace TrtParserService.FileReader
+﻿using TrtParserService.App.FileReader;
+
+namespace TrtParserService.Implementation.FileReader
 {
     public class LocalFileReader : IFileReader
     {

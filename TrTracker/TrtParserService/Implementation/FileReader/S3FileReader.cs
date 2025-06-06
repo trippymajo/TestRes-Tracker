@@ -2,9 +2,10 @@
 using Amazon.S3.Model;
 using Microsoft.Extensions.Options;
 
+using TrtParserService.App.FileReader;
 using TrtShared.ServiceCommunication;
 
-namespace TrtParserService.FileReader
+namespace TrtParserService.Implementation.FileReader
 {
     public class S3FileReader : IFileReader
     {

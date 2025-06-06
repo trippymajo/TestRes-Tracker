@@ -2,8 +2,9 @@
 using System.Xml.Linq;
 
 using TrtShared.DTO;
+using TrtParserService.ParserCore;
 
-namespace TrtParserService.FileExtensions
+namespace TrtParserService.Implementation.ParserCore
 {
     class TrxParser : IFileParser
     {

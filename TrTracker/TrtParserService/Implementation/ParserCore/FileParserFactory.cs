@@ -1,4 +1,6 @@
-﻿namespace TrtParserService.FileExtensions
+﻿using TrtParserService.ParserCore;
+
+namespace TrtParserService.Implementation.ParserCore
 {
     class FileParserFactory : IFileParserFactory
     {

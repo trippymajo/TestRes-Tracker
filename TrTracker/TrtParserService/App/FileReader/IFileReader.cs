@@ -1,4 +1,4 @@
-﻿namespace TrtParserService.FileReader
+﻿namespace TrtParserService.App.FileReader
 {
     public interface IFileReader
     {

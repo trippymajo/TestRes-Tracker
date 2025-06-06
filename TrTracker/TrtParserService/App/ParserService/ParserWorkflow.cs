@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 using TrtShared.DTO;
 using TrtShared.ServiceCommunication;
 
-using TrtParserService.FileExtensions;
-using TrtParserService.FileReader;
+using TrtParserService.ParserCore;
+using TrtParserService.App.FileReader;
 
 namespace TrtParserService
 {

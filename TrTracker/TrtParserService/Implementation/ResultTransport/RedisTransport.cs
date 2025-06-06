@@ -4,7 +4,7 @@ using StackExchange.Redis;
 
 using TrtShared.ServiceCommunication;
 
-namespace TrtParserService.ResultTransport
+namespace TrtParserService.Implementation.ResultTransport
 {
     class RedisTransport : IParseTransport
     {

@@ -1,6 +1,6 @@
 ﻿using TrtShared.DTO;
 
-namespace TrtParserService.FileExtensions
+namespace TrtParserService.ParserCore
 {
     public interface IFileParser
     {

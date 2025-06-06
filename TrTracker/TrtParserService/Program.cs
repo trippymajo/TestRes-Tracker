@@ -3,9 +3,13 @@ using Microsoft.Extensions.Options;
 using Amazon.S3;
 
 using TrtShared.ServiceCommunication;
-using TrtParserService.FileExtensions;
-using TrtParserService.ResultTransport;
-using TrtParserService.FileReader;
+
+using TrtParserService.ParserCore;
+using TrtParserService.App.FileReader;
+
+using TrtParserService.Implementation.ParserCore;
+using TrtParserService.Implementation.ResultTransport;
+using TrtParserService.Implementation.FileReader;
 
 namespace TrtParserService
 {
