@@ -1,6 +1,7 @@
 ﻿using TrtShared.DTO;
+using TrtUploadService.App.UploadResultsService;
 
-namespace TrtUploadService.UploadResultsService
+namespace TrtUploadService.Implementation.UploadResultsService
 {
     public class ApiUploadResultsService : IUploadResultsService
     {

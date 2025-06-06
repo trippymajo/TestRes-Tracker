@@ -1,4 +1,6 @@
-﻿namespace TrtUploadService.UploadDocService
+﻿using TrtUploadService.App.UploadDocService;
+
+namespace TrtUploadService.Implementation.UploadDocService
 {
     public class LocalUploadDocService : IUploadDocService
     {

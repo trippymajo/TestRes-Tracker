@@ -3,9 +3,10 @@ using Amazon.S3.Model;
 
 using Microsoft.Extensions.Options;
 
+using TrtUploadService.App.UploadDocService;
 using TrtShared.ServiceCommunication;
 
-namespace TrtUploadService.UploadDocService
+namespace TrtUploadService.Implementation.UploadDocService
 {
     public class S3UploadDocService : IUploadDocService
     {

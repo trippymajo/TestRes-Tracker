@@ -3,7 +3,7 @@
 using RichardSzalay.MockHttp;
 
 // Tested namespaces
-using TrtUploadService.UploadResultsService;
+using TrtUploadService.Implementation.UploadResultsService;
 using TrtShared.DTO;
 
 namespace TrtUploadServiceTests

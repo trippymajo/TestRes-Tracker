@@ -8,7 +8,7 @@ using Amazon.S3.Model;
 using Moq;
 
 // Tested namespaces
-using TrtUploadService.UploadDocService;
+using TrtUploadService.Implementation.UploadDocService;
 using TrtShared.ServiceCommunication;
 
 

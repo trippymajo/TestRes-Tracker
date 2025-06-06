@@ -2,8 +2,8 @@
 
 using TrtShared.ServiceCommunication;
 using TrtUploadService;
-using TrtUploadService.UploadResultsService;
-using TrtUploadService.UploadDocService;
+using TrtUploadService.App.UploadResultsService;
+using TrtUploadService.App.UploadDocService;
 
 namespace TrtApiService.Controllers
 {

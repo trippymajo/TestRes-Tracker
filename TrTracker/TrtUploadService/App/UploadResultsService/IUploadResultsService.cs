@@ -1,6 +1,6 @@
 ﻿using TrtShared.DTO;
 
-namespace TrtUploadService.UploadResultsService
+namespace TrtUploadService.App.UploadResultsService
 {
      public interface IUploadResultsService
     {

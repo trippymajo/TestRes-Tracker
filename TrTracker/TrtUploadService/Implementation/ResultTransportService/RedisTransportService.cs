@@ -4,7 +4,7 @@ using StackExchange.Redis;
 using TrtShared.DTO;
 using TrtShared.ServiceCommunication;
 
-namespace TrtUploadService.ResultTransport
+namespace TrtUploadService.Implementation.ResultTransport
 {
     public class RedisTransport : IUploadTransport
     {

@@ -7,15 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="UploadService\**" />
-    <Content Remove="UploadService\**" />
-    <EmbeddedResource Remove="UploadService\**" />
-    <None Remove="UploadService\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="ResultTransport\" />
+    <Folder Include="App\" />
+    <Folder Include="Implementation\" />
   </ItemGroup>
 
   <ItemGroup>

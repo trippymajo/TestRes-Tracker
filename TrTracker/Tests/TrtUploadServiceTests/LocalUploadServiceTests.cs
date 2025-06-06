@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 
 // Tested namespaces
-using TrtUploadService.UploadDocService;
+using TrtUploadService.Implementation.UploadDocService;
 
 namespace TrtUploadServiceTests
 {
