@@ -1,3 +1,6 @@
+# TrtUploadService
+![Architecture](./UploadService-Architecture.png)
+
 ### Configuring appsettings.json
   
 ```json
