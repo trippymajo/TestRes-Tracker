@@ -1,3 +1,6 @@
+# TrtParserService
+![Architecture](./ParserService-Architecture.png)
+
 ### Configuring appsettings.json
   
 ```json
