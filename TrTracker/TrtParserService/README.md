@@ -43,4 +43,6 @@ StorageProvider:
 * Port - opened port for redis transfering
 * Password - password for secure redis pub/sub
 * UseSsl - More secure channel, [true] by default. For local non pruduction deployment use [false]
-
+  
+## TRX Parse info:
+Microsoft.Testing.Extensions.TrxReport
