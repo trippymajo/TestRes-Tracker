@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrtApiService.Data;
 using TrtApiService.Models;
-using TrtApiService.Repositories;
+using TrtApiService.Implementation.Repositories;
 using TrtShared.DTO;
 
 namespace TrtApiService.Implementation.UploadParsedService
@@ -10,14 +10,14 @@ namespace TrtApiService.Implementation.UploadParsedService
     {
         private readonly TrtDbContext _context;
         private readonly ILogger _logger;
-        private readonly IBranchRepository _branch;
-        private readonly IResultRepository _result;
-        private readonly ITestRepository _test;
-        private readonly ITestrunRepository _testrun;
+        private readonly BranchRepository _branch;
+        private readonly ResultRepository _result;
+        private readonly TestRepository _test;
+        private readonly TestrunRepository _testrun;
 
         public UploadParsedService(TrtDbContext context, ILogger<UploadParsedService> logger,
-            IBranchRepository branch, IResultRepository result,
-            ITestRepository test, ITestrunRepository testrun)
+            BranchRepository branch, ResultRepository result,
+            TestRepository test, TestrunRepository testrun)
         {
             _context = context;
             _logger = logger;

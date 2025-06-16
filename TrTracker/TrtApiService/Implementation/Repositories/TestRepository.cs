@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrtApiService.Data;
 using TrtApiService.Models;
-using TrtApiService.Repositories;
 
-namespace TrtApiService.Implementation.Repositories.EfCore
+namespace TrtApiService.Implementation.Repositories
 {
-    public class EfCoreTestRepository : EfCoreRepository<Test>, ITestRepository
+    public class TestRepository : Repository<Test>
     {
-        public EfCoreTestRepository(TrtDbContext context) : base(context) { }
+        public TestRepository(TrtDbContext context) : base(context) { }
 
         public async Task<Test> CreateAsync(string testName, string? testDesc)
         {

@@ -1,13 +1,12 @@
 ﻿using TrtApiService.Data;
-using TrtApiService.Repositories;
 
-namespace TrtApiService.Implementation.Repositories.EfCore
+namespace TrtApiService.Implementation.Repositories
 {
-    public class EfCoreRepository<T> : IRepository<T> where T : class
+    public class Repository<T> where T : class
     {
         protected readonly TrtDbContext _context;
 
-        public EfCoreRepository(TrtDbContext context)
+        public Repository(TrtDbContext context)
         {
             _context = context;
         }

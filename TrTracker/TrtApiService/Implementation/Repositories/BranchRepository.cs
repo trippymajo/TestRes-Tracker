@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrtApiService.Data;
 using TrtApiService.Models;
-using TrtApiService.Repositories;
 
-namespace TrtApiService.Implementation.Repositories.EfCore
+namespace TrtApiService.Implementation.Repositories
 {
-    public class EfCoreBranchRepository : EfCoreRepository<Branch>, IBranchRepository
+    public class BranchRepository : Repository<Branch>
     {
-        public EfCoreBranchRepository(TrtDbContext context) : base(context) { }
+        public BranchRepository(TrtDbContext context) : base(context) { }
 
         public async Task<Branch> CreateAsync(string branchName)
         {
