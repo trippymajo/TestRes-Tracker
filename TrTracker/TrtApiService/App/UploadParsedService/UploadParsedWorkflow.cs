@@ -4,9 +4,9 @@ using TrtApiService.Models;
 using TrtApiService.Implementation.Repositories;
 using TrtShared.DTO;
 
-namespace TrtApiService.Implementation.UploadParsedService
+namespace TrtApiService.App.UploadParsedService
 {
-    public class UploadParsedService
+    public class UploadParsedWorkflow
     {
         private readonly TrtDbContext _context;
         private readonly ILogger _logger;
@@ -15,7 +15,7 @@ namespace TrtApiService.Implementation.UploadParsedService
         private readonly TestRepository _test;
         private readonly TestrunRepository _testrun;
 
-        public UploadParsedService(TrtDbContext context, ILogger<UploadParsedService> logger,
+        public UploadParsedWorkflow(TrtDbContext context, ILogger<UploadParsedWorkflow> logger,
             BranchRepository branch, ResultRepository result,
             TestRepository test, TestrunRepository testrun)
         {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TrtApiService.Implementation.UploadParsedService;
+using TrtApiService.App.UploadParsedService;
 using TrtShared.DTO;
 
 namespace TrtApiService.Controllers
@@ -8,11 +8,11 @@ namespace TrtApiService.Controllers
     [Route("api/[controller]")]
     public class UploadResultsController : ControllerBase
     {
-        private readonly UploadParsedService _uploadService;
+        private readonly UploadParsedWorkflow _uploadService;
         private readonly ILogger _logger;
 
         // Default Constructor
-        public UploadResultsController(UploadParsedService uploadService, 
+        public UploadResultsController(UploadParsedWorkflow uploadService, 
             ILogger<UploadResultsController> logger)
         {
             _logger = logger;
