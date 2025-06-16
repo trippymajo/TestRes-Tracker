@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TrtApiService.App.UploadParsedService;
 using TrtApiService.Data;
 using TrtApiService.Models;
 using TrtApiService.Repositories;
@@ -7,7 +6,7 @@ using TrtShared.DTO;
 
 namespace TrtApiService.Implementation.UploadParsedService
 {
-    public class EfCoreUploadParsedService : UploadParserServiceBase
+    public class UploadParsedService
     {
         private readonly TrtDbContext _context;
         private readonly ILogger _logger;
@@ -16,7 +15,7 @@ namespace TrtApiService.Implementation.UploadParsedService
         private readonly ITestRepository _test;
         private readonly ITestrunRepository _testrun;
 
-        public EfCoreUploadParsedService(TrtDbContext context, ILogger<EfCoreUploadParsedService> logger,
+        public UploadParsedService(TrtDbContext context, ILogger<UploadParsedService> logger,
             IBranchRepository branch, IResultRepository result,
             ITestRepository test, ITestrunRepository testrun)
         {
@@ -28,7 +27,7 @@ namespace TrtApiService.Implementation.UploadParsedService
             _testrun = testrun;
         }
 
-        public override async Task<bool> UploadParsedAsync(TestRunDTO dto)
+        public async Task<bool> UploadParsedAsync(TestRunDTO dto)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             int testRunId = 0;
@@ -62,7 +61,7 @@ namespace TrtApiService.Implementation.UploadParsedService
             return true;
         }
 
-        protected override async Task<IList<Test>> GetAddedTestsListFromDtoAsync(TestRunDTO dto)
+        private async Task<IList<Test>> GetAddedTestsListFromDtoAsync(TestRunDTO dto)
         {
             // Dto list of testNames
             var dtoTestsList = dto.Results
@@ -85,7 +84,7 @@ namespace TrtApiService.Implementation.UploadParsedService
             return newTests;
         }
 
-        protected override async Task<IDictionary<string, int>> GetCurTestsDicAsync(TestRunDTO dto)
+        private async Task<IDictionary<string, int>> GetCurTestsDicAsync(TestRunDTO dto)
         {
             // Dto's list of testNames
             var testNamesList = dto.Results
@@ -98,7 +97,7 @@ namespace TrtApiService.Implementation.UploadParsedService
                 .ToDictionaryAsync(t => t.Name, t => t.Id);
         }
 
-        protected override IList<Result> GetResultsListFromDto(TestRunDTO dto, int testRunId, IDictionary<string, int> testsDic)
+        private IList<Result> GetResultsListFromDto(TestRunDTO dto, int testRunId, IDictionary<string, int> testsDic)
         {
             var results = dto.Results
                 .Select(r => new Result
@@ -112,7 +111,7 @@ namespace TrtApiService.Implementation.UploadParsedService
             return results;
         }
 
-        protected override Testrun GetTestrunFromDto(TestRunDTO dto, Branch branch)
+        private Testrun GetTestrunFromDto(TestRunDTO dto, Branch branch)
         {
             var testrun = new Testrun
             {

@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using TrtApiService.App.UploadParsedService;
 using TrtApiService.Data;
 using TrtApiService.Implementation.Repositories.EfCore;
 using TrtApiService.Implementation.UploadParsedService;
@@ -16,15 +15,13 @@ namespace TsrUploadService
             #region APISERVICE
             builder.Services.AddControllers();
             
-            // if RelationalDb ...
-            builder.Services.AddScoped<IUploadParsedService, EfCoreUploadParsedService>();
+            builder.Services.AddScoped<UploadParsedService>();
 
             builder.Services.AddScoped(typeof(IRepository<>), typeof(EfCoreRepository<>));
             builder.Services.AddScoped<IBranchRepository, EfCoreBranchRepository>();
             builder.Services.AddScoped<IResultRepository, EfCoreResultRepository>();
             builder.Services.AddScoped<ITestRepository, EfCoreTestRepository>();
             builder.Services.AddScoped<ITestrunRepository, EfCoreTestrunRepository>();
-            //endif RelationalDb
 
             builder.Services.AddDbContext<TrtDbContext>(options =>
                            options.UseNpgsql(builder.Configuration.GetConnectionString("TrtDbContext")
