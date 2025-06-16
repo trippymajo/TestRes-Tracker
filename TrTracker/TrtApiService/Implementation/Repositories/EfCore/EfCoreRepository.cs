@@ -1,6 +1,7 @@
 ﻿using TrtApiService.Data;
+using TrtApiService.Repositories;
 
-namespace TrtApiService.Repositories.EfCore
+namespace TrtApiService.Implementation.Repositories.EfCore
 {
     public class EfCoreRepository<T> : IRepository<T> where T : class
     {
