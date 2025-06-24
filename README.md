@@ -31,7 +31,20 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
    - Run `docker compose up` (using `compose.yaml`)  
    - This will start all required containers (Redis, PostgreSQL) for local development.
 
-4. **Start the system**
+4. **Create DB migrations*
+   - Terminal:
+   ```bash
+   cd TrTracker\TrtApiService
+   dotnet ef migrations add InitialCreate --project TrtApiService --startup-project TrtApiService
+   dotnet ef database update --project TrtApiService --startup-project TrtApiService
+   ```
+   or use my migrations:
+   ```bash
+   cd TrTracker\TrtApiService
+   dotnet ef database update
+   ```
+
+5. **Start the system**
    - MS VS:  
     Use 'ALL' configuration to build and start all the microservices. F5 or Ctrl+F5 without debugging.
    - Terminal:
