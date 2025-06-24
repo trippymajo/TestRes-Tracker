@@ -31,7 +31,7 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
    - Run `docker compose up` (using `compose.yaml`)  
    - This will start all required containers (Redis, PostgreSQL) for local development.
 
-4. **Create DB migrations*
+4. **Create DB migrations**
    - Terminal:
    ```bash
    cd TrTracker\TrtApiService
