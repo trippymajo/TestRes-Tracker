@@ -3,10 +3,11 @@ using TrtApiService.Data;
 using TrtApiService.Models;
 using TrtApiService.Implementation.Repositories;
 using TrtShared.DTO;
+using TrtApiService.App.UploadParsedService;
 
-namespace TrtApiService.App.UploadParsedService
+namespace TrtApiService.Implementation.UploadParsedService
 {
-    public class UploadParsedWorkflow
+    public class UploadParsedService : IUploadParsedService
     {
         private readonly TrtDbContext _context;
         private readonly ILogger _logger;
@@ -15,7 +16,7 @@ namespace TrtApiService.App.UploadParsedService
         private readonly TestRepository _test;
         private readonly TestrunRepository _testrun;
 
-        public UploadParsedWorkflow(TrtDbContext context, ILogger<UploadParsedWorkflow> logger,
+        public UploadParsedService(TrtDbContext context, ILogger<UploadParsedService> logger,
             BranchRepository branch, ResultRepository result,
             TestRepository test, TestrunRepository testrun)
         {
@@ -52,6 +53,10 @@ namespace TrtApiService.App.UploadParsedService
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
+
+                _logger.LogInformation(
+                    "Successfully pushed to DB: Branch: {Branch}, TestrunId: {TestRunId}",
+                    branch.Name, testRun.Id);
             }
             catch (Exception ex)
             {

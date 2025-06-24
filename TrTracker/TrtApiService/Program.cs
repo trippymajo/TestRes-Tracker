@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using TrtApiService.App.UploadParsedService;
+
 using TrtApiService.Data;
+
+using TrtApiService.App.UploadParsedService;
+
 using TrtApiService.Implementation.Repositories;
+using TrtApiService.Implementation.UploadParsedService;
 
 namespace TsrUploadService
 {
@@ -14,7 +18,7 @@ namespace TsrUploadService
             #region APISERVICE
             builder.Services.AddControllers();
             
-            builder.Services.AddScoped<UploadParsedWorkflow>();
+            builder.Services.AddScoped<IUploadParsedService, UploadParsedService>();
 
             builder.Services.AddScoped(typeof(Repository<>));
             builder.Services.AddScoped<BranchRepository>();

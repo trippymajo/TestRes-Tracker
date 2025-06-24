@@ -8,11 +8,10 @@ namespace TrtApiService.Controllers
     [Route("api/[controller]")]
     public class UploadParsedController : ControllerBase
     {
-        private readonly UploadParsedWorkflow _uploadService;
+        private readonly IUploadParsedService _uploadService;
         private readonly ILogger _logger;
 
-        // Default Constructor
-        public UploadParsedController(UploadParsedWorkflow uploadService, 
+        public UploadParsedController(IUploadParsedService uploadService, 
             ILogger<UploadParsedController> logger)
         {
             _logger = logger;
