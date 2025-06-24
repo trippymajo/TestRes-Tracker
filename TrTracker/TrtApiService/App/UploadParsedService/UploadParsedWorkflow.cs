@@ -40,13 +40,16 @@ namespace TrtApiService.App.UploadParsedService
                 // Test processing
                 await _test.CreateAsync(await GetAddedTestsListFromDtoAsync(dto));
 
+                // Save changes to get ids of branches and tests
+                await _context.SaveChangesAsync();
+
                 // TestRun processing
                 var testRun = await _testrun.CreateAsync(GetTestrunFromDto(dto, branch));
-                testRunId = testRun.Id;
+                await _context.SaveChangesAsync();
 
                 // Results processing
                 var testsDic = await GetCurTestsDicAsync(dto);
-                await _result.CreateAsync(GetResultsListFromDto(dto, testRunId, testsDic));
+                await _result.CreateAsync(GetResultsListFromDto(dto, testRun.Id, testsDic));
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -116,7 +119,9 @@ namespace TrtApiService.App.UploadParsedService
             var testrun = new Testrun
             {
                 Version = dto.Version,
-                Date = dto.Date,
+                Date = dto.Date.Kind == DateTimeKind.Utc
+                    ? dto.Date
+                    : dto.Date.ToUniversalTime(),
                 BranchId = branch.Id,
             };
 
