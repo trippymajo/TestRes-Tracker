@@ -54,7 +54,7 @@ namespace TrtUploadService.Implementation.ResultTransport
                     if (dto != null)
                     {
                         tcs.TrySetResult(dto);
-                        _logger.LogInformation("Parsed DTO received from Redis: {message}", message);
+                        _logger.LogInformation("Parsed DTO received from Redis with {NumResults} results", dto.Results.Count);
                     }
                     else
                     {

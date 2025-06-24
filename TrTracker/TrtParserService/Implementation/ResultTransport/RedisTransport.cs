@@ -28,7 +28,7 @@ namespace TrtParserService.Implementation.ResultTransport
                 var pub = _redis.GetSubscriber();
                 var channel = RedisChannel.Literal("file-parsed");
                 await pub.PublishAsync(channel, jsonDto);
-                _logger.LogInformation("Published to Redis: {dtoJson}", jsonDto);
+                _logger.LogInformation("Length of message published to Redis: {jsonLen}", jsonDto.Length);
             }
             catch (Exception ex)
             {
