@@ -6,27 +6,27 @@ namespace TrtApiService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UploadResultsController : ControllerBase
+    public class UploadParsedController : ControllerBase
     {
         private readonly UploadParsedWorkflow _uploadService;
         private readonly ILogger _logger;
 
         // Default Constructor
-        public UploadResultsController(UploadParsedWorkflow uploadService, 
-            ILogger<UploadResultsController> logger)
+        public UploadParsedController(UploadParsedWorkflow uploadService, 
+            ILogger<UploadParsedController> logger)
         {
             _logger = logger;
             _uploadService = uploadService;
         }
 
         /// <summary>
-        /// POST: api/UploadResults
+        /// POST: api/UploadParsed
         /// POSTs all info about test run in to the DB
         /// </summary>
         /// <param name="dto">Data to put in to DB</param>
         /// <returns>Http result of the operation</returns>
         [HttpPost]
-        public async Task<IActionResult> UploadResultsAsync([FromBody] TestRunDTO dto)
+        public async Task<IActionResult> UploadParsedAsync([FromBody] TestRunDTO dto)
         {
             if (dto == null 
                 || dto.Results.Any() == false 

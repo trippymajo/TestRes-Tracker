@@ -18,7 +18,7 @@ namespace TrtUploadService.Implementation.UploadResultsService
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("/api/UploadResults", dto);
+                var response = await _httpClient.PostAsJsonAsync("/api/UploadParsed", dto);
 
                 if (response.IsSuccessStatusCode)
                     _logger.LogInformation("Successfully pushed TestRunDTO to API.");

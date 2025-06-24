@@ -12,10 +12,12 @@ namespace TrtApiService.Controllers
     public class BranchesController : ControllerBase
     {
         private readonly TrtDbContext _context;
+        private readonly ILogger<BranchesController> _logger;
 
-        public BranchesController(TrtDbContext context)
+        public BranchesController(TrtDbContext context, ILogger<BranchesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Branches

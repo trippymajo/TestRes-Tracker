@@ -30,7 +30,6 @@ namespace TrtApiService.App.UploadParsedService
         public async Task<bool> UploadParsedAsync(TestRunDTO dto)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
-            int testRunId = 0;
 
             try
             {
