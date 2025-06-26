@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Folder Include="DTOs\" />
+    <Folder Include="Result\" />
+    <Folder Include="ServiceCommunication\" />
   </ItemGroup>
 
 </Project>
