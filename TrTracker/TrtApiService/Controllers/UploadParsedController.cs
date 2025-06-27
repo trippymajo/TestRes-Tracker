@@ -29,6 +29,7 @@ namespace TrtApiService.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadParsedAsync([FromBody] TestRunDTO dto)
         {
+            // Validation should be in UploadParsedAsync(dto) workflow.
             if (dto == null 
                 || dto.Results.Any() == false 
                 || string.IsNullOrWhiteSpace(dto.Branch)

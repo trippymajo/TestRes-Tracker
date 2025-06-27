@@ -63,7 +63,7 @@ namespace TrtApiService.Implementation.UploadParsedService
             }
             catch (Exception ex)
             {
-                string errMsg = "Failed to process results uploading";
+                var errMsg = "Failed to process results uploading";
                 _logger.LogError(ex, errMsg);
                 await transaction.RollbackAsync();
                 return RetVal.Fail(ErrorType.ServerError, errMsg);

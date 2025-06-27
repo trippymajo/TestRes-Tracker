@@ -2,6 +2,7 @@
 using TrtApiService.App.CrudServices;
 using TrtApiService.Data;
 using TrtApiService.Models;
+using TrtShared.RetValType;
 
 namespace TrtApiService.Implementation.CrudService
 {
@@ -16,62 +17,107 @@ namespace TrtApiService.Implementation.CrudService
             _logger = logger;
         }
 
-        public async Task<int> CreateBranchAsync(Branch branch)
+        public async Task<RetVal<int>> CreateBranchAsync(Branch branch)
         {
             // Validate BRANCH
 
-            _context.Branches.Add(branch);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Branches.Add(branch);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                var errMsg = "Creating new branch failed";
+                _logger.LogError(ex, errMsg);
+                return RetVal<int>.Fail(ErrorType.ServerError, errMsg);
+            }
 
-            return branch.Id;
+            return RetVal<int>.Ok(branch.Id);
         }
 
-        public async Task<Branch?> GetBranchAsync(int id)
+        public async Task<RetVal<Branch>> GetBranchAsync(int id)
         {
             // Validate ID
 
-            var branch = await _context.Branches.FindAsync(id);
+            Branch? branch = null;
+            try
+            {
+                branch = await _context.Branches.FindAsync(id);
+            }
+            catch (Exception ex)
+            {
+                var errMsg = $"Getting branch with id {id} failed"; ;
+                _logger.LogError(ex, errMsg);
+                return RetVal<Branch>.Fail(ErrorType.ServerError, errMsg);
+            }
 
             if (branch == null)
             {
-                _logger.LogWarning("Branch with id {id} was not found", id);
-                return null;
+                var errMsg = $"Branch with id {id} was not found";
+                _logger.LogWarning(errMsg);
+                return RetVal<Branch>.Fail(ErrorType.NotFound, errMsg);
             }
 
-            return branch;
+            return RetVal<Branch>.Ok(branch);
         }
 
-        public async Task<IEnumerable<Branch>> GetBranchesAsync()
+        public async Task<RetVal<IEnumerable<Branch>>> GetBranchesAsync()
         {
-            return await _context.Branches.ToListAsync();
+            List<Branch>branchList;
+
+            try
+            {
+                branchList = await _context.Branches.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                var errMsg = $"Getting all the branches failed";
+                _logger.LogError(ex, errMsg);
+                return RetVal<IEnumerable<Branch>>.Fail(ErrorType.ServerError, errMsg);
+            }
+
+            return RetVal<IEnumerable<Branch>>.Ok(branchList);
         }
 
-        public async Task<bool> RenameBranchAsync(int id, string strNewName)
+        public async Task<RetVal> RenameBranchAsync(int id, string strNewName)
         {
             if (string.IsNullOrWhiteSpace(strNewName))
             {
-                _logger.LogWarning("New name for branch is empty");
-                return false;
+                var errMsg = "New name for branch is empty";
+                _logger.LogWarning(errMsg);
+                return RetVal.Fail(ErrorType.BadRequest, errMsg);
             }
 
-            var branch = await _context.Branches.FindAsync(id);
-            if (branch == null)
+            try
             {
-                _logger.LogWarning("Branch with id {id} was not found", id);
-                return false;
-            }
+                var branch = await _context.Branches.FindAsync(id);
+                if (branch == null)
+                {
+                    var errMsg = $"Branch with id {id} was not found";
+                    _logger.LogWarning(errMsg);
+                    return RetVal.Fail(ErrorType.NotFound, errMsg);
+                }
 
-            var branchExists = await _context.Branches.AnyAsync(b => b.Name == strNewName);
-            if (branchExists)
+                var branchExists = await _context.Branches.AnyAsync(b => b.Name == strNewName);
+                if (branchExists)
+                {
+                    var errMsg = $"Branch with name {strNewName} already exists";
+                    _logger.LogWarning(errMsg);
+                    return RetVal.Fail(ErrorType.NotFound, errMsg);
+                }
+
+                branch.Name = strNewName;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
             {
-                _logger.LogWarning("Branch with name {BranchName} already exists", strNewName);
-                return false;
+                var errMsg = $"Renaming the branch id {id} failed";
+                _logger.LogError(ex, errMsg);
+                return RetVal<IEnumerable<Branch>>.Fail(ErrorType.ServerError, errMsg);
             }
 
-            branch.Name = strNewName;
-            await _context.SaveChangesAsync();
-
-            return true;
+            return RetVal.Ok();
         }
     }
 }
