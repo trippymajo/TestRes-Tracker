@@ -29,20 +29,20 @@
             => new RetVal(false, errorType, errorTxt);
     }
 
-    public class Result<T> : RetVal
+    public class RetVal<T> : RetVal
     {
         public T? Value { get; }
 
-        protected Result(bool success, T? value, ErrorType? errorType, string? errorTxt)
+        protected RetVal(bool success, T? value, ErrorType? errorType, string? errorTxt)
             : base(success, errorType, errorTxt)
         {
             Value = value;
         }
 
-        public static Result<T> Ok(T value)
-            => new Result<T>(true, value, null, null);
+        public static RetVal<T> Ok(T value)
+            => new RetVal<T>(true, value, null, null);
 
-        public static Result<T> Fail(ErrorType errorType, string errorTxt)
-            => new Result<T>(false, default, errorType, errorTxt);
+        public static RetVal<T> Fail(ErrorType errorType, string errorTxt)
+            => new RetVal<T>(false, default, errorType, errorTxt);
     }
 }
