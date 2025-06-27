@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace TrtShared.RetVal.Extensions
+using TrtShared.RetValType;
+
+namespace TrtShared.RetValExtensions
 {
     public static class RetValExtensions
     {

@@ -1,4 +1,4 @@
-﻿namespace TrtShared.RetVal
+﻿namespace TrtShared.RetValType
 {
     public enum ErrorType
     {
