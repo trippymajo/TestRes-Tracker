@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TrtApiService.App.UploadParsedService;
+
+using TrtShared.RetValExtensions;
 using TrtShared.DTO;
 
 namespace TrtApiService.Controllers
@@ -36,10 +38,9 @@ namespace TrtApiService.Controllers
                 return BadRequest("Invalid data");
             }
 
-            if (await _uploadService.UploadParsedAsync(dto) == false)
-                return StatusCode(500, "Failed to process testRun upload");
+            var result = await _uploadService.UploadParsedAsync(dto);
 
-            return Ok("New results been successfully uploaded");
+            return this.ToActionResult(result);
         }
     }
 }
