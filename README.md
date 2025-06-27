@@ -60,6 +60,7 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
 ## Roadmap
 - [x] GitHub Actions CI for all projects
 - [ ] Api Service CRUD
+- [ ] FluentValidation across services
 - [ ] Full cloud deployment
 - [ ] Security research
 - [ ] More test results formats support
