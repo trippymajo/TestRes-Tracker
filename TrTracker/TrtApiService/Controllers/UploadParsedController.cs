@@ -20,12 +20,7 @@ namespace TrtApiService.Controllers
             _uploadService = uploadService;
         }
 
-        /// <summary>
-        /// POST: api/UploadParsed
-        /// POSTs all info about test run in to the DB
-        /// </summary>
-        /// <param name="dto">Data to put in to DB</param>
-        /// <returns>Http result of the operation</returns>
+        // POST: api/UploadParsed
         [HttpPost]
         public async Task<IActionResult> UploadParsedAsync([FromBody] TestRunDTO dto)
         {

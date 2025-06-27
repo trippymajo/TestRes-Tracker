@@ -63,6 +63,7 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
 - [ ] Beta-1 (TRX Endpoint full working)
 - [ ] Full docker deployment (Early August 2025)
 - [ ] Full cloud deployment (Autumn)
+- [ ] FluentValidation across services (Release-1)
 - [ ] Security research (Release-1)
 - [ ] More test results formats support (Release-1)
 
