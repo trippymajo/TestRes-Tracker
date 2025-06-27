@@ -24,7 +24,7 @@ namespace TrtShared.RetValExtensions
             };
         }
 
-        public static IActionResult ToActionResult<T>(this ControllerBase controller, Result<T> result)
+        public static IActionResult ToActionResult<T>(this ControllerBase controller, RetVal<T> result)
         {
             if (result.Success)
                 return controller.Ok(result.Value);
