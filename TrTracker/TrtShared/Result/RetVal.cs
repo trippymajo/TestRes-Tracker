@@ -1,34 +1,35 @@
-﻿namespace TrtShared.Result
+﻿namespace TrtShared.RetVal
 {
     public enum ErrorType
     {
-        BadRequest,
-        Forbidden,
-        Conflict,
-        NotFound,
-        Unexpected
+        BadRequest, // 400
+        Forbidden, // 403
+        Conflict, // 409
+        NotFound, // 404
+        ServerError, // 5xx
+        Unexpected // 4xx - 5xx
     }
 
-    public class Result
+    public class RetVal
     {
         public bool Success { get; }
         public ErrorType? ErrorType { get; }
         public string? ErrorText {  get; }
 
-        protected Result(bool success, ErrorType? errorType, string? errorTxt)
+        protected RetVal(bool success, ErrorType? errorType, string? errorTxt)
         {
             Success = success;
             ErrorType = errorType;
             ErrorText = errorTxt;
         }
 
-        public static Result Ok()
-            => new Result(true, null, null);
-        public static Result Fail(ErrorType errorType, string errorTxt)
-            => new Result(false, errorType, errorTxt);
+        public static RetVal Ok()
+            => new RetVal(true, null, null);
+        public static RetVal Fail(ErrorType errorType, string errorTxt)
+            => new RetVal(false, errorType, errorTxt);
     }
 
-    public class Result<T> : Result
+    public class Result<T> : RetVal
     {
         public T? Value { get; }
 
@@ -43,6 +44,5 @@
 
         public static Result<T> Fail(ErrorType errorType, string errorTxt)
             => new Result<T>(false, default, errorType, errorTxt);
-
     }
 }
