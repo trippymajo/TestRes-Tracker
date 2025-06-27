@@ -1,4 +1,5 @@
-﻿using TrtShared.DTO;
+﻿using TrtShared.RetValType;
+using TrtShared.DTO;
 
 namespace TrtApiService.App.UploadParsedService
 {
@@ -9,6 +10,6 @@ namespace TrtApiService.App.UploadParsedService
         /// </summary>
         /// <param name="dto">Data transfered from UploadService after parsing</param>
         /// <returns>If uploading results was successfull</returns>
-        Task<bool> UploadParsedAsync(TestRunDTO dto);
+        Task<RetVal> UploadParsedAsync(TestRunDTO dto);
     }
 }
