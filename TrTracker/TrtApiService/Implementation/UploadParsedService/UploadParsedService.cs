@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using TrtApiService.Data;
 using TrtApiService.Models;
-using TrtApiService.Implementation.Repositories;
-using TrtShared.DTO;
 using TrtApiService.App.UploadParsedService;
+using TrtApiService.Implementation.Repositories;
+
+using TrtShared.RetValType;
+using TrtShared.DTO;
 
 namespace TrtApiService.Implementation.UploadParsedService
 {
@@ -28,7 +31,7 @@ namespace TrtApiService.Implementation.UploadParsedService
             _testrun = testrun;
         }
 
-        public async Task<bool> UploadParsedAsync(TestRunDTO dto)
+        public async Task<RetVal> UploadParsedAsync(TestRunDTO dto)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -60,12 +63,13 @@ namespace TrtApiService.Implementation.UploadParsedService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to process results uploading");
+                string errMsg = "Failed to process results uploading";
+                _logger.LogError(ex, errMsg);
                 await transaction.RollbackAsync();
-                return false;
+                return RetVal.Fail(ErrorType.ServerError, errMsg);
             }
 
-            return true;
+            return RetVal.Ok();
         }
 
         private async Task<IList<Test>> GetAddedTestsListFromDtoAsync(TestRunDTO dto)
