@@ -6,6 +6,12 @@ namespace TrtShared.RetValExtensions
 {
     public static class RetValExtensions
     {
+        /// <summary>
+        /// Converts RetVal result in to IActionResult for the controllers
+        /// </summary>
+        /// <param name="controller">Current controller</param>
+        /// <param name="result">Result of the workflow service</param>
+        /// <returns>IActionResults for HTTP Response</returns>
         public static IActionResult ToActionResult(this ControllerBase controller, RetVal result)
         {
             if (result.Success)
@@ -24,6 +30,12 @@ namespace TrtShared.RetValExtensions
             };
         }
 
+        /// <summary>
+        /// Converts RetVal<T> result in to IActionResult for the controllers
+        /// </summary>
+        /// <param name="controller">Current controller</param>
+        /// <param name="result">Result of the workflow service</param>
+        /// <returns>IActionResults for HTTP Response</returns>
         public static ActionResult ToActionResult<T>(this ControllerBase controller, RetVal<T> result)
         {
             if (result.Success)
