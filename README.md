@@ -58,11 +58,13 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
    ```
 
 ## Roadmap
-- [x] GitHub Actions CI for all projects
-- [ ] Api Service CRUD
-- [ ] Full cloud deployment
-- [ ] Security research
-- [ ] More test results formats support
+- [x] GitHub Actions CI for all projects (Mid June)
+- [ ] Api Service CRUD (Mid July 2025)
+- [ ] Beta-1 (TRX Endpoint full working)
+- [ ] Full docker deployment (Early August 2025)
+- [ ] Full cloud deployment (Autumn)
+- [ ] Security research (Release-1)
+- [ ] More test results formats support (Release-1)
 
 ## Contributing
 Pull requests, additional info in issues are welcome! But currently nothing related to ApiService, as it is not ready yet.
@@ -70,3 +72,5 @@ Help needed with:
 - [ ] Parsers of the test files
 - [ ] Concrete implementations for Azure Cloud Development
 - [ ] Concrete implementations for Google Cloud Development
+- [ ] Additional CRUD operations for API Service
+- [ ] Unit tests for Services
