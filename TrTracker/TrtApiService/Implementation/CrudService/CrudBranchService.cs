@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using TrtApiService.App.CrudServices;
 using TrtApiService.Data;
+using TrtApiService.DTOs;
 using TrtApiService.Models;
+
 using TrtShared.RetValType;
 
 namespace TrtApiService.Implementation.CrudService
@@ -17,14 +20,33 @@ namespace TrtApiService.Implementation.CrudService
             _logger = logger;
         }
 
-        public async Task<RetVal<int>> CreateBranchAsync(Branch branch)
+        public async Task<RetVal<int>> CreateBranchAsync(CreateBranchDTO branchDto)
         {
-            // Validate BRANCH
+            if (string.IsNullOrWhiteSpace(branchDto.Name))
+            {
+                var errMsg = "Name is required";
+                _logger.LogWarning(errMsg);
+                return RetVal<int>.Fail(ErrorType.BadRequest, errMsg);
+            }
 
             try
             {
+                if (await IsBranchExists(branchDto.Name))
+                {
+                    var errMsg = $"Branch with name {branchDto.Name} already exists";
+                    _logger.LogWarning(errMsg);
+                    return RetVal<int>.Fail(ErrorType.BadRequest, errMsg);
+                }
+
+                var branch = new Branch
+                {
+                    Name = branchDto.Name,
+                };
+
                 _context.Branches.Add(branch);
                 await _context.SaveChangesAsync();
+
+                return RetVal<int>.Ok(branch.Id);
             }
             catch (Exception ex)
             {
@@ -32,16 +54,13 @@ namespace TrtApiService.Implementation.CrudService
                 _logger.LogError(ex, errMsg);
                 return RetVal<int>.Fail(ErrorType.ServerError, errMsg);
             }
-
-            return RetVal<int>.Ok(branch.Id);
         }
 
         public async Task<RetVal> DeleteBranchAsync(int id)
         {
-            Branch? branch = null;
             try
             {
-                branch = await _context.Branches.FindAsync(id);
+                var branch = await _context.Branches.FindAsync(id);
 
                 if (branch == null)
                 {
@@ -51,6 +70,8 @@ namespace TrtApiService.Implementation.CrudService
                 }
 
                 _context.Branches.Remove(branch);
+
+                return RetVal.Ok();
             }
             catch (Exception ex)
             {
@@ -58,16 +79,22 @@ namespace TrtApiService.Implementation.CrudService
                 _logger.LogError(ex, errMsg);
                 return RetVal.Fail(ErrorType.ServerError, errMsg);
             }
-
-            return RetVal.Ok();
         }
 
         public async Task<RetVal<Branch>> GetBranchAsync(int id)
         {
-            Branch? branch = null;
             try
             {
-                branch = await _context.Branches.FindAsync(id);
+                var branch = await _context.Branches.FindAsync(id);
+
+                if (branch == null)
+                {
+                    var errMsg = $"Branch with id {id} was not found";
+                    _logger.LogWarning(errMsg);
+                    return RetVal<Branch>.Fail(ErrorType.NotFound, errMsg);
+                }
+
+                return RetVal<Branch>.Ok(branch);
             }
             catch (Exception ex)
             {
@@ -75,24 +102,15 @@ namespace TrtApiService.Implementation.CrudService
                 _logger.LogError(ex, errMsg);
                 return RetVal<Branch>.Fail(ErrorType.ServerError, errMsg);
             }
-
-            if (branch == null)
-            {
-                var errMsg = $"Branch with id {id} was not found";
-                _logger.LogWarning(errMsg);
-                return RetVal<Branch>.Fail(ErrorType.NotFound, errMsg);
-            }
-
-            return RetVal<Branch>.Ok(branch);
         }
 
         public async Task<RetVal<IEnumerable<Branch>>> GetBranchesAsync()
         {
-            List<Branch>branchList;
-
             try
             {
-                branchList = await _context.Branches.ToListAsync();
+                var branchList = await _context.Branches.ToListAsync();
+
+                return RetVal<IEnumerable<Branch>>.Ok(branchList);
             }
             catch (Exception ex)
             {
@@ -100,13 +118,11 @@ namespace TrtApiService.Implementation.CrudService
                 _logger.LogError(ex, errMsg);
                 return RetVal<IEnumerable<Branch>>.Fail(ErrorType.ServerError, errMsg);
             }
-
-            return RetVal<IEnumerable<Branch>>.Ok(branchList);
         }
 
-        public async Task<RetVal> RenameBranchAsync(int id, string strNewName)
+        public async Task<RetVal> UpdateBranchAsync(int id, UpdateBranchDTO branchDto)
         {
-            if (string.IsNullOrWhiteSpace(strNewName))
+            if (string.IsNullOrWhiteSpace(branchDto.Name))
             {
                 var errMsg = "New name for branch is empty";
                 _logger.LogWarning(errMsg);
@@ -123,25 +139,37 @@ namespace TrtApiService.Implementation.CrudService
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                var branchExists = await _context.Branches.AnyAsync(b => b.Name == strNewName);
-                if (branchExists)
+                if (await IsBranchExists(branchDto.Name))
                 {
-                    var errMsg = $"Branch with name {strNewName} already exists";
+                    var errMsg = $"Branch with name {branchDto.Name} already exists";
                     _logger.LogWarning(errMsg);
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                branch.Name = strNewName;
+                branch.Name = branchDto.Name;
                 await _context.SaveChangesAsync();
+
+                return RetVal.Ok();
             }
             catch (Exception ex)
             {
                 var errMsg = $"Renaming the branch id {id} failed";
                 _logger.LogError(ex, errMsg);
-                return RetVal<IEnumerable<Branch>>.Fail(ErrorType.ServerError, errMsg);
+                return RetVal.Fail(ErrorType.ServerError, errMsg);
             }
+        }
 
-            return RetVal.Ok();
+        /// <summary>
+        /// Checks if the branch with specified name already exists
+        /// </summary>
+        /// <param name="branchName">Branch name to check</param>
+        /// <returns>
+        /// True - branch exists
+        /// False - no such branch found
+        ///</returns>
+        private async Task<bool> IsBranchExists(string branchName)
+        {
+            return await _context.Branches.AnyAsync(b => b.Name == branchName);
         }
     }
 }

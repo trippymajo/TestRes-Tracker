@@ -1,4 +1,5 @@
 ﻿using TrtApiService.Models;
+using TrtApiService.DTOs;
 
 using TrtShared.RetValType;
 
@@ -7,7 +8,7 @@ namespace TrtApiService.App.CrudServices
     public interface ICrudBranchService
     {
         /// <summary>
-        /// Returns an object with all branches included in DB
+        /// Returns a list with all branches included in DB
         /// </summary>
         /// <returns>Enumerable object</returns>
         Task<RetVal<IEnumerable<Branch>>> GetBranchesAsync();
@@ -20,19 +21,19 @@ namespace TrtApiService.App.CrudServices
         Task<RetVal<Branch>> GetBranchAsync(int id);
 
         /// <summary>
-        /// Rename specified with id branch
+        /// Updates specified with id branch
         /// </summary>
         /// <param name="id">Id of the branch</param>
-        /// <param name="strNewName">New name for the branch</param>
-        /// <returns>If the branch was renamed</returns>
-        Task<RetVal> RenameBranchAsync(int id, string strNewName);
+        /// <param name="branchDto">BranchDto object with ne </param>
+        /// <returns>If the branch was updated</returns>
+        Task<RetVal> UpdateBranchAsync(int id, UpdateBranchDTO branchDto);
 
         /// <summary>
         /// Create new branch from specified Branch object
         /// </summary>
-        /// <param name="branch">Branch object to create</param>
+        /// <param name="branchDto">BranchDto object to create</param>
         /// <returns>Created branch Id</returns>
-        Task<RetVal<int>> CreateBranchAsync(Branch branch);
+        Task<RetVal<int>> CreateBranchAsync(CreateBranchDTO branchDto);
 
         /// <summary>
         /// Detes branch with all testruns, results related to it
