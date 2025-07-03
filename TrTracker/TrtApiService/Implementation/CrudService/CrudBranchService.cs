@@ -36,10 +36,34 @@ namespace TrtApiService.Implementation.CrudService
             return RetVal<int>.Ok(branch.Id);
         }
 
+        public async Task<RetVal> DeleteBranchAsync(int id)
+        {
+            Branch? branch = null;
+            try
+            {
+                branch = await _context.Branches.FindAsync(id);
+
+                if (branch == null)
+                {
+                    var errMsg = $"Branch with id {id} was not found";
+                    _logger.LogWarning(errMsg);
+                    return RetVal.Fail(ErrorType.NotFound, errMsg);
+                }
+
+                _context.Branches.Remove(branch);
+            }
+            catch (Exception ex)
+            {
+                var errMsg = $"Deleting the branche with id {id} failed";
+                _logger.LogError(ex, errMsg);
+                return RetVal.Fail(ErrorType.ServerError, errMsg);
+            }
+
+            return RetVal.Ok();
+        }
+
         public async Task<RetVal<Branch>> GetBranchAsync(int id)
         {
-            // Validate ID
-
             Branch? branch = null;
             try
             {

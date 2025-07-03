@@ -30,11 +30,15 @@ namespace TrtApiService.App.CrudServices
         /// <summary>
         /// Create new branch from specified Branch object
         /// </summary>
-        /// <param name="branch"></param>
+        /// <param name="branch">Branch object to create</param>
         /// <returns>Created branch Id</returns>
         Task<RetVal<int>> CreateBranchAsync(Branch branch);
 
-        // TODO!
-        //Task<bool> DeleteBranchAsync(int id);
+        /// <summary>
+        /// Detes branch with all testruns, results related to it
+        /// </summary>
+        /// <param name="id">Id of the branch to delete</param>
+        /// <returns></returns>
+        Task<RetVal> DeleteBranchAsync(int id);
     }
 }
