@@ -17,5 +17,8 @@ namespace TrtApiService.Models
         // Foreign Key
         public int BranchId { get; set; }
         public Branch Branch { get; set; } = null!;
+
+        // Navigation
+        public ICollection<Result> Results { get; set; } = new HashSet<Result>();
     }
 }

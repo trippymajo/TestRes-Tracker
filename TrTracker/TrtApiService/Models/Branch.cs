@@ -11,7 +11,7 @@ namespace TrtApiService.Models
         [StringLength(255, MinimumLength = 1)]
         public string Name { get; set; } = string.Empty;
 
-        //[Required]
-        //public bool IsArchived { get; set; } = false;
+        // Navigation
+        public ICollection<Testrun> Testruns { get; set; } = new HashSet<Testrun>();
     }
 }

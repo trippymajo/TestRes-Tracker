@@ -12,5 +12,8 @@ namespace TrtApiService.Models
         public string Name { get; set; } = string.Empty;
 
         public string? Description { get; set; }
+
+        // Navigation
+        public ICollection<Result> Results { get; set; } = new HashSet<Result>();
     }
 }
