@@ -4,6 +4,7 @@ using TrtApiService.App.CrudServices;
 using TrtApiService.Data;
 using TrtApiService.DTOs;
 using TrtApiService.Models;
+using TrtApiService.Implementation.Repositories;
 
 using TrtShared.RetValType;
 
@@ -12,11 +13,13 @@ namespace TrtApiService.Implementation.CrudService
     public class CrudBranchService : ICrudBranchService
     {
         private readonly TrtDbContext _context;
+        private readonly BranchRepository _branch;
         private readonly ILogger<CrudBranchService> _logger;
 
-        public CrudBranchService(TrtDbContext context, ILogger<CrudBranchService> logger)
+        public CrudBranchService(TrtDbContext context, BranchRepository branch, ILogger<CrudBranchService> logger)
         {
             _context = context;
+            _branch = branch;
             _logger = logger;
         }
 
@@ -31,7 +34,7 @@ namespace TrtApiService.Implementation.CrudService
 
             try
             {
-                if (await IsBranchExists(branchDto.Name))
+                if (await _branch.IsExistsAsync(branchDto.Name))
                 {
                     var errMsg = $"Branch with name {branchDto.Name} already exists";
                     _logger.LogWarning(errMsg);
@@ -43,7 +46,7 @@ namespace TrtApiService.Implementation.CrudService
                     Name = branchDto.Name,
                 };
 
-                _context.Branches.Add(branch);
+                await _branch.CreateAsync(branch);
                 await _context.SaveChangesAsync();
 
                 return RetVal<int>.Ok(branch.Id);
@@ -60,7 +63,7 @@ namespace TrtApiService.Implementation.CrudService
         {
             try
             {
-                var branch = await _context.Branches.FindAsync(id);
+                var branch = await _branch.FindByIdAsync(id);
 
                 if (branch == null)
                 {
@@ -69,8 +72,8 @@ namespace TrtApiService.Implementation.CrudService
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                _context.Branches.Remove(branch);
-
+                _branch.Remove(branch);
+                await _context.SaveChangesAsync();
                 return RetVal.Ok();
             }
             catch (Exception ex)
@@ -85,7 +88,7 @@ namespace TrtApiService.Implementation.CrudService
         {
             try
             {
-                var branch = await _context.Branches.FindAsync(id);
+                var branch = await _branch.FindByIdAsync(id);
 
                 if (branch == null)
                 {
@@ -108,7 +111,7 @@ namespace TrtApiService.Implementation.CrudService
         {
             try
             {
-                var branchList = await _context.Branches.ToListAsync();
+                var branchList = await _branch.GetAsync();
 
                 return RetVal<IEnumerable<Branch>>.Ok(branchList);
             }
@@ -131,7 +134,7 @@ namespace TrtApiService.Implementation.CrudService
 
             try
             {
-                var branch = await _context.Branches.FindAsync(id);
+                var branch = await _branch.FindByIdAsync(id);
                 if (branch == null)
                 {
                     var errMsg = $"Branch with id {id} was not found";
@@ -139,14 +142,15 @@ namespace TrtApiService.Implementation.CrudService
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                if (await IsBranchExists(branchDto.Name))
+                if (branch.Name != branchDto.Name
+                    && await _branch.IsExistsAsync(branchDto.Name))
                 {
                     var errMsg = $"Branch with name {branchDto.Name} already exists";
                     _logger.LogWarning(errMsg);
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                branch.Name = branchDto.Name;
+                _branch.UpdateName(branch, branchDto.Name);
                 await _context.SaveChangesAsync();
 
                 return RetVal.Ok();
@@ -157,19 +161,6 @@ namespace TrtApiService.Implementation.CrudService
                 _logger.LogError(ex, errMsg);
                 return RetVal.Fail(ErrorType.ServerError, errMsg);
             }
-        }
-
-        /// <summary>
-        /// Checks if the branch with specified name already exists
-        /// </summary>
-        /// <param name="branchName">Branch name to check</param>
-        /// <returns>
-        /// True - branch exists
-        /// False - no such branch found
-        ///</returns>
-        private async Task<bool> IsBranchExists(string branchName)
-        {
-            return await _context.Branches.AnyAsync(b => b.Name == branchName);
         }
     }
 }
