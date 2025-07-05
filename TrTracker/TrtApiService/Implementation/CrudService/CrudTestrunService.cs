@@ -1,26 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
-
+﻿using Microsoft.CodeAnalysis.Operations;
+using Microsoft.EntityFrameworkCore;
 using TrtApiService.App.CrudServices;
 using TrtApiService.Data;
 using TrtApiService.DTOs;
+using TrtApiService.Implementation.Repositories;
 using TrtApiService.Models;
-
 using TrtShared.RetValType;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TrtApiService.Implementation.CrudService
 {
     public class CrudTestrunService : ICrudTestrunService
     {
         private readonly TrtDbContext _context;
+        private readonly TestrunRepository _testrun;
+        private readonly BranchRepository _branch;
         private readonly ILogger<CrudTestrunService> _logger;
 
-        public CrudTestrunService(TrtDbContext context, ILogger<CrudTestrunService> logger)
+        public CrudTestrunService(TrtDbContext context, TestrunRepository testrun, BranchRepository branch, ILogger<CrudTestrunService> logger)
         {
             _context = context;
+            _testrun = testrun;
+            _branch = branch;
             _logger = logger;
         }
 
-        // WIP
         public async Task<RetVal<int>> CreateTestrunAsync(CreateTestrunDTO testrunDto)
         {
             if (string.IsNullOrWhiteSpace(testrunDto.Version))
@@ -29,19 +33,30 @@ namespace TrtApiService.Implementation.CrudService
             if (testrunDto.BranchId <= 0)
                 return RetVal<int>.Fail(ErrorType.BadRequest, "BranchId must be positive.");
 
-            if (!await IsBranchExists(testrunDto.BranchId))
+            if (!await _branch.IsExistsAsync(testrunDto.BranchId))
                 return RetVal<int>.Fail(ErrorType.NotFound, $"Branch with id {testrunDto.BranchId} was not found.");
+
+            var exists = await _testrun.IsExistsAsync(testrunDto.BranchId, testrunDto.Version, testrunDto.Date);
+
+            if (exists)
+            {
+                var errMsg = "Such testrun already is in the DB";
+                _logger.LogWarning(errMsg);
+                return RetVal<int>.Fail(ErrorType.Conflict, errMsg);
+            }
 
             var testrun = new Testrun
             {
                 Version = testrunDto.Version,
-                Date = testrunDto.Date,
+                Date = testrunDto.Date.Kind == DateTimeKind.Utc
+                    ? testrunDto.Date
+                    : testrunDto.Date.ToUniversalTime(),
                 BranchId = testrunDto.BranchId
             };
 
             try
             {
-                _context.Testruns.Add(testrun);
+                await _testrun.CreateAsync(testrun);
                 await _context.SaveChangesAsync();
                 return RetVal<int>.Ok(testrun.Id);
             }
@@ -53,7 +68,6 @@ namespace TrtApiService.Implementation.CrudService
             }
         }
 
-        // WIP
         public async Task<RetVal> DeleteTestrunAsync(int id)
         {
             if (id <= 0)
@@ -61,7 +75,7 @@ namespace TrtApiService.Implementation.CrudService
 
             try
             {
-                var testrun = await _context.Testruns.FindAsync(id);
+                var testrun = await _testrun.FindByIdAsync(id);
                 if (testrun == null)
                 {
                     var errMsg = $"Testrun with id {id} was not found.";
@@ -69,7 +83,7 @@ namespace TrtApiService.Implementation.CrudService
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                _context.Testruns.Remove(testrun);
+                _testrun.Remove(testrun);
                 await _context.SaveChangesAsync();
 
                 return RetVal.Ok();
@@ -82,7 +96,6 @@ namespace TrtApiService.Implementation.CrudService
             }
         }
 
-        // WIP
         public async Task<RetVal<Testrun>> GetTestrunAsync(int id)
         {
             if (id <= 0)
@@ -90,10 +103,7 @@ namespace TrtApiService.Implementation.CrudService
 
             try
             {
-                var testrun = await _context.Testruns
-                    .Include(tr => tr.Branch)
-                    .Include(tr => tr.Results)
-                    .FirstOrDefaultAsync(tr => tr.Id == id);
+                var testrun = await _testrun.FindByIdAsync(id);
 
                 if (testrun == null)
                 {
@@ -116,10 +126,7 @@ namespace TrtApiService.Implementation.CrudService
         {
             try
             {
-                var testrunList = await _context.Testruns
-                    .Include(tr => tr.Branch)
-                    .Include(tr => tr.Results)
-                    .ToListAsync();
+                var testrunList = await _testrun.GetAsync();
 
                 return RetVal<IEnumerable<Testrun>>.Ok(testrunList);
             }
@@ -131,7 +138,6 @@ namespace TrtApiService.Implementation.CrudService
             }
         }
 
-        // WIP
         public async Task<RetVal> UpdateTestrunAsync(int id, UpdateTestrunDTO testrunDto)
         {
             if (string.IsNullOrWhiteSpace(testrunDto.Version))
@@ -148,9 +154,16 @@ namespace TrtApiService.Implementation.CrudService
                 return RetVal.Fail(ErrorType.BadRequest, errMsg);
             }
 
+            if (!await _branch.IsExistsAsync(testrunDto.BranchId))
+            {
+                var errMsg = $"Branch with id {testrunDto.BranchId} does not exist.";
+                _logger.LogWarning(errMsg);
+                return RetVal.Fail(ErrorType.NotFound, errMsg);
+            }
+
             try
             {
-                var testrun = await _context.Testruns.FindAsync(id);
+                var testrun = await _testrun.FindByIdAsync(id);
                 if (testrun == null)
                 {
                     var errMsg = $"Testrun with id {id} was not found.";
@@ -158,17 +171,7 @@ namespace TrtApiService.Implementation.CrudService
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                if (!await IsBranchExists(testrunDto.BranchId))
-                {
-                    var errMsg = $"Branch with id {testrunDto.BranchId} does not exist.";
-                    _logger.LogWarning(errMsg);
-                    return RetVal.Fail(ErrorType.NotFound, errMsg);
-                }
-
-                testrun.Version = testrunDto.Version;
-                testrun.Date = testrunDto.Date;
-                testrun.BranchId = testrunDto.BranchId;
-
+                _testrun.Update(testrun, testrunDto.Version, testrunDto.Date, testrunDto.BranchId);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -179,19 +182,6 @@ namespace TrtApiService.Implementation.CrudService
             }
 
             return RetVal.Ok();
-        }
-
-        /// <summary>
-        /// Checks if the branch with specified id exists
-        /// </summary>
-        /// <param name="id">id of the branch to check</param>
-        /// <returns>
-        /// True - branch exists
-        /// False - branch does not exists
-        /// </returns>
-        private async Task<bool> IsBranchExists(int id)
-        {
-            return await _context.Branches.AnyAsync(b => b.Id == id);
         }
     }
 }

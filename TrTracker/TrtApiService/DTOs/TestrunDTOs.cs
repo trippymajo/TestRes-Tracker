@@ -23,5 +23,8 @@ namespace TrtApiService.DTOs
         [Required]
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
+
+        [Required]
+        public int BranchId { get; set; }
     }
 }

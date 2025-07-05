@@ -38,7 +38,7 @@ namespace TrtApiService.Implementation.CrudService
                 {
                     var errMsg = $"Branch with name {branchDto.Name} already exists";
                     _logger.LogWarning(errMsg);
-                    return RetVal<int>.Fail(ErrorType.BadRequest, errMsg);
+                    return RetVal<int>.Fail(ErrorType.Conflict, errMsg);
                 }
 
                 var branch = new Branch
@@ -147,7 +147,7 @@ namespace TrtApiService.Implementation.CrudService
                 {
                     var errMsg = $"Branch with name {branchDto.Name} already exists";
                     _logger.LogWarning(errMsg);
-                    return RetVal.Fail(ErrorType.NotFound, errMsg);
+                    return RetVal.Fail(ErrorType.Conflict, errMsg);
                 }
 
                 _branch.UpdateName(branch, branchDto.Name);

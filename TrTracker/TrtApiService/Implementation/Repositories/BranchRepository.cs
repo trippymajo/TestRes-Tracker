@@ -64,14 +64,27 @@ namespace TrtApiService.Implementation.Repositories
         /// <summary>
         /// READ. Checks if the branch with specified name already exists
         /// </summary>
-        /// <param name="branchName">Branch name to check</param>
+        /// <param name="name">Branch name to check</param>
         /// <returns>
         /// True - branch exists
         /// False - no such branch found
         ///</returns>
-        public async Task<bool> IsExistsAsync(string branchName)
+        public async Task<bool> IsExistsAsync(string name)
         {
-            return await _context.Branches.AnyAsync(b => b.Name == branchName);
+            return await _context.Branches.AnyAsync(b => b.Name == name);
+        }
+
+        /// <summary>
+        /// READ. Checks if the branch with specified id already exists
+        /// </summary>
+        /// <param name="id">Branch id to check</param>
+        /// <returns>
+        /// True - branch exists
+        /// False - no such branch found
+        ///</returns>
+        public async Task<bool> IsExistsAsync(int id)
+        {
+            return await _context.Branches.AnyAsync(b => b.Id == id);
         }
 
         /// <summary>
