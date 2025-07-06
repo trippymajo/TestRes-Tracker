@@ -1,104 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TrtApiService.Data;
-using TrtApiService.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-// WIP
+using TrtApiService.App.CrudServices;
+using TrtApiService.DTOs;
+
+using TrtShared.RetValExtensions;
+
 namespace TrtApiService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class TestsController : ControllerBase
     {
-        private readonly TrtDbContext _context;
+        private readonly ICrudTestService _crudTest;
 
-        public TestsController(TrtDbContext context)
+        public TestsController(ICrudTestService testService)
         {
-            _context = context;
+            _crudTest = testService;
         }
 
         // GET: api/Tests
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Test>>> GetTests()
+        public async Task<IActionResult> GetTests()
         {
-            return await _context.Tests.ToListAsync();
+            var result = await _crudTest.GetTestsAsync();
+            return this.ToActionResult(result);
         }
 
         // GET: api/Tests/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Test>> GetTest(int id)
+        public async Task<IActionResult> GetTest(int id)
         {
-            var test = await _context.Tests.FindAsync(id);
-
-            if (test == null)
-            {
-                return NotFound();
-            }
-
-            return test;
-        }
-
-        // PUT: api/Tests/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTest(int id, Test test)
-        {
-            if (id != test.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(test).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var result = await _crudTest.GetTestAsync(id);
+            return this.ToActionResult(result);
         }
 
         // POST: api/Tests
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Test>> PostTest(Test test)
+        [Authorize(Policy = "CanManageTests")]
+        public async Task<IActionResult> PostTest([FromBody] CUTestDTO dto)
         {
-            _context.Tests.Add(test);
-            await _context.SaveChangesAsync();
+            var result = await _crudTest.CreateTestAsync(dto);
+            if (!result.Success)
+                return this.ToActionResult(result);
 
-            return CreatedAtAction("GetTest", new { id = test.Id }, test);
+            return CreatedAtAction(nameof(GetTest), new { id = result.Value }, new { id = result.Value });
+        }
+
+        // PUT: api/Tests/5
+        [HttpPut("{id}")]
+        [Authorize(Policy = "CanManageTests")]
+        public async Task<IActionResult> UpdateTest(int id, [FromBody] CUTestDTO dto)
+        {
+            var result = await _crudTest.UpdateTestAsync(id, dto);
+            return this.ToActionResult(result);
         }
 
         // DELETE: api/Tests/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "CanManageTests")]
         public async Task<IActionResult> DeleteTest(int id)
         {
-            var test = await _context.Tests.FindAsync(id);
-            if (test == null)
-            {
-                return NotFound();
-            }
-
-            _context.Tests.Remove(test);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool TestExists(int id)
-        {
-            return _context.Tests.Any(e => e.Id == id);
+            var result = await _crudTest.DeleteTestAsync(id);
+            return this.ToActionResult(result);
         }
     }
 }

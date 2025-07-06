@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TrtApiService.App.CrudServices;
 using TrtApiService.DTOs;
 using TrtApiService.Models;
