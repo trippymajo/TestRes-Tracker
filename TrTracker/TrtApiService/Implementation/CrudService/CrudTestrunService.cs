@@ -1,12 +1,10 @@
-﻿using Microsoft.CodeAnalysis.Operations;
-using Microsoft.EntityFrameworkCore;
+﻿using TrtApiService.Implementation.Repositories;
 using TrtApiService.App.CrudServices;
 using TrtApiService.Data;
 using TrtApiService.DTOs;
-using TrtApiService.Implementation.Repositories;
 using TrtApiService.Models;
+
 using TrtShared.RetValType;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TrtApiService.Implementation.CrudService
 {
@@ -27,11 +25,13 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal<int>> CreateTestrunAsync(CUTestrunDTO testrunDto)
         {
-            if (string.IsNullOrWhiteSpace(testrunDto.Version))
-                return RetVal<int>.Fail(ErrorType.BadRequest, "Version is required.");
-
-            if (testrunDto.BranchId <= 0)
-                return RetVal<int>.Fail(ErrorType.BadRequest, "BranchId must be positive.");
+            // Validation
+            if (!IsValidDto(testrunDto))
+            {
+                var errMsg = "Testrun data provided is not valid";
+                _logger.LogWarning(errMsg);
+                return RetVal<int>.Fail(ErrorType.BadRequest, errMsg);
+            }
 
             if (!await _branch.IsExistsAsync(testrunDto.BranchId))
                 return RetVal<int>.Fail(ErrorType.NotFound, $"Branch with id {testrunDto.BranchId} was not found.");
@@ -140,16 +140,10 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal> UpdateTestrunAsync(int id, CUTestrunDTO testrunDto)
         {
-            if (string.IsNullOrWhiteSpace(testrunDto.Version))
+            // Validation
+            if (!IsValidDto(testrunDto))
             {
-                var errMsg = "Version is required.";
-                _logger.LogWarning(errMsg);
-                return RetVal.Fail(ErrorType.BadRequest, errMsg);
-            }
-
-            if (testrunDto.BranchId <= 0)
-            {
-                var errMsg = "BranchId must be positive.";
+                var errMsg = "Testrun data provided is not valid";
                 _logger.LogWarning(errMsg);
                 return RetVal.Fail(ErrorType.BadRequest, errMsg);
             }
@@ -182,6 +176,18 @@ namespace TrtApiService.Implementation.CrudService
             }
 
             return RetVal.Ok();
+        }
+
+        private bool IsValidDto(CUTestrunDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Version)
+                || dto.Date != default
+                || dto.BranchId <= 0)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

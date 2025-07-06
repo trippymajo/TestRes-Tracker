@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TrtApiService.App.CrudServices;
+﻿using TrtApiService.App.CrudServices;
+using TrtApiService.Implementation.Repositories;
 using TrtApiService.Data;
 using TrtApiService.DTOs;
-using TrtApiService.Implementation.Repositories;
 using TrtApiService.Models;
+
 using TrtShared.RetValType;
 
 namespace TrtApiService.Implementation.CrudService
@@ -22,6 +22,7 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal<int>> CreateTestAsync(CUTestDTO testDto)
         {
+            // Validation
             if (string.IsNullOrWhiteSpace(testDto.Name))
             {
                 var errMsg = "Test name is required";
@@ -122,6 +123,7 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal> UpdateTestAsync(int id, CUTestDTO testDto)
         {
+            // Validation
             if (string.IsNullOrWhiteSpace(testDto.Name))
             {
                 var errMsg = "Test name is required";

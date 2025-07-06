@@ -31,6 +31,18 @@ namespace TrtApiService.Implementation.Repositories
         }
 
         /// <summary>
+        /// READ. Checks if the testrun with specified id already exists
+        /// </summary>
+        /// <param name="id">Tesrun id to check</param>
+        /// True - testrun exists
+        /// False - no testrun found
+        /// </returns>
+        public async Task<bool> IsExistsAsync(int id)
+        {
+            return await _context.Testruns.AnyAsync(tr => tr.Id == id);
+        }
+
+        /// <summary>
         /// READ. Gets testrun with Navigation Props loaded
         /// </summary>
         /// <param name="id"></param>
@@ -43,6 +55,13 @@ namespace TrtApiService.Implementation.Repositories
                     .FirstOrDefaultAsync(tr => tr.Id == id);
         }
 
+        /// <summary>
+        /// UPDATE
+        /// </summary>
+        /// <param name="testrun">Testrun entity to update</param>
+        /// <param name="version">Version of product where testrun being held</param>
+        /// <param name="date">Date when testrun was done</param>
+        /// <param name="branchId">Corresponding branch of the testrun</param>
         public void Update(Testrun testrun, string version, DateTime date, int branchId)
         {
             testrun.Version = version;

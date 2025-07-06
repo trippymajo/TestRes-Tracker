@@ -59,7 +59,8 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
 
 ## Roadmap
 - [x] GitHub Actions CI for all projects (Mid June)
-- [ ] Api Service CRUD (Mid July 2025)
+- [x] Api Service CRUD (Mid July 2025)
+- [ ] Logging and RetVal in one function as Extension to Logger or static helper (End July 2025)
 - [ ] Beta-1 (TRX Endpoint full working)
 - [ ] Full docker deployment (Early August 2025)
 - [ ] Full cloud deployment (Autumn)

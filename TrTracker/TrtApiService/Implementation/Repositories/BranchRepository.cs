@@ -92,7 +92,7 @@ namespace TrtApiService.Implementation.Repositories
         /// </summary>
         /// <param name="branch">Branch to update</param>
         /// <param name="newName">Name to save for branch</param>
-        public void UpdateName(Branch branch, string newName)
+        public void Update(Branch branch, string newName)
         {
             branch.Name = newName;
         }

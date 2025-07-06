@@ -50,9 +50,12 @@ namespace TrtUploadService
             #endregion // UPLOAD_SERVICE
 
             #region SWAGGER
-            // Say we are gay gamers exloring reality aka SWAGGER
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            // Ha-ha SWAG rofl
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Services.AddEndpointsApiExplorer();
+                builder.Services.AddSwaggerGen();
+            }
             #endregion
 
             #region API_SERVICE

@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using TrtApiService.App.CrudServices;
 using TrtApiService.DTOs;
 using TrtApiService.Models;
+
 using TrtShared.RetValExtensions;
 
-// WIP
 namespace TrtApiService.Controllers
 {
     [Route("api/[controller]")]

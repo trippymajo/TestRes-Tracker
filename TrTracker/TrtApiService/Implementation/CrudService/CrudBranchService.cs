@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using TrtApiService.App.CrudServices;
+﻿using TrtApiService.App.CrudServices;
 using TrtApiService.Data;
 using TrtApiService.DTOs;
 using TrtApiService.Models;
@@ -25,6 +23,7 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal<int>> CreateBranchAsync(CUBranchDTO branchDto)
         {
+            // Validation
             if (string.IsNullOrWhiteSpace(branchDto.Name))
             {
                 var errMsg = "Name is required";
@@ -125,6 +124,7 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal> UpdateBranchAsync(int id, CUBranchDTO branchDto)
         {
+            // Validation
             if (string.IsNullOrWhiteSpace(branchDto.Name))
             {
                 var errMsg = "New name for branch is empty";
@@ -150,7 +150,7 @@ namespace TrtApiService.Implementation.CrudService
                     return RetVal.Fail(ErrorType.Conflict, errMsg);
                 }
 
-                _branch.UpdateName(branch, branchDto.Name);
+                _branch.Update(branch, branchDto.Name);
                 await _context.SaveChangesAsync();
 
                 return RetVal.Ok();

@@ -1,104 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TrtApiService.Data;
-using TrtApiService.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-// WIP
+using TrtApiService.App.CrudServices;
+using TrtApiService.DTOs;
+
+using TrtShared.RetValExtensions;
+
 namespace TrtApiService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ResultsController : ControllerBase
     {
-        private readonly TrtDbContext _context;
+        private readonly ICrudResultService _crudResult;
 
-        public ResultsController(TrtDbContext context)
+        public ResultsController(ICrudResultService crudResult)
         {
-            _context = context;
+            _crudResult = crudResult;
         }
 
         // GET: api/Results
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Result>>> GetResults()
+        public async Task<IActionResult> GetResults()
         {
-            return await _context.Results.ToListAsync();
+            var result = await _crudResult.GetResultsAsync();
+            return this.ToActionResult(result);
         }
 
         // GET: api/Results/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result>> GetResult(int id)
+        public async Task<IActionResult> GetResult(int id)
         {
-            var result = await _context.Results.FindAsync(id);
-
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return result;
-        }
-
-        // PUT: api/Results/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutResult(int id, Result result)
-        {
-            if (id != result.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(result).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ResultExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            var result = await _crudResult.GetResultAsync(id);
+            return this.ToActionResult(result);
         }
 
         // POST: api/Results
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Result>> PostResult(Result result)
+        [Authorize(Policy = "CanManageResults")]
+        public async Task<IActionResult> PostResult([FromBody] CreateResultDTO dto)
         {
-            _context.Results.Add(result);
-            await _context.SaveChangesAsync();
+            var result = await _crudResult.CreateResultAsync(dto);
+            if (!result.Success)
+                return this.ToActionResult(result);
 
-            return CreatedAtAction("GetResult", new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetResult), new { id = result.Value }, new { id = result.Value });
+        }
+
+        // PUT: api/Results/5
+        [HttpPut("{id}")]
+        [Authorize(Policy = "CanManageResults")]
+        public async Task<IActionResult> UpdateResult(int id, [FromBody] UpdateResultDTO dto)
+        {
+            var result = await _crudResult.UpdateResultAsync(id, dto);
+            return this.ToActionResult(result);
         }
 
         // DELETE: api/Results/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "CanManageResults")]
         public async Task<IActionResult> DeleteResult(int id)
         {
-            var result = await _context.Results.FindAsync(id);
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            _context.Results.Remove(result);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ResultExists(int id)
-        {
-            return _context.Results.Any(e => e.Id == id);
+            var result = await _crudResult.DeleteResultAsync(id);
+            return this.ToActionResult(result);
         }
     }
 }
