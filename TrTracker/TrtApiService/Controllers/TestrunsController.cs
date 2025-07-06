@@ -6,6 +6,7 @@ using TrtApiService.DTOs;
 using TrtApiService.Models;
 using TrtShared.RetValExtensions;
 
+// WIP
 namespace TrtApiService.Controllers
 {
     [Route("api/[controller]")]
@@ -39,7 +40,7 @@ namespace TrtApiService.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize(Policy = "CanManageTestruns")]
-        public async Task<IActionResult> UpdateTestrun(int id, [FromBody] UpdateTestrunDTO testrunDto)
+        public async Task<IActionResult> UpdateTestrun(int id, [FromBody] CUTestrunDTO testrunDto)
         {
             var result = await _crudTestrun.UpdateTestrunAsync(id, testrunDto);
             return this.ToActionResult(result);
@@ -49,7 +50,7 @@ namespace TrtApiService.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize(Policy = "CanManageTestruns")]
-        public async Task<IActionResult> PostTestrun([FromBody] CreateTestrunDTO testrunDto)
+        public async Task<IActionResult> PostTestrun([FromBody] CUTestrunDTO testrunDto)
         {
             var result = await _crudTestrun.CreateTestrunAsync(testrunDto);
             return this.ToActionResult(result);

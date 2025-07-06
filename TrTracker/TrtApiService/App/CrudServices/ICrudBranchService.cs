@@ -26,14 +26,14 @@ namespace TrtApiService.App.CrudServices
         /// <param name="id">Id of the branch</param>
         /// <param name="branchDto">BranchDto object with ne </param>
         /// <returns>If the branch was updated</returns>
-        Task<RetVal> UpdateBranchAsync(int id, UpdateBranchDTO branchDto);
+        Task<RetVal> UpdateBranchAsync(int id, CUBranchDTO branchDto);
 
         /// <summary>
         /// Create new branch from specified Branch object
         /// </summary>
         /// <param name="branchDto">BranchDto object to create</param>
         /// <returns>Created branch Id</returns>
-        Task<RetVal<int>> CreateBranchAsync(CreateBranchDTO branchDto);
+        Task<RetVal<int>> CreateBranchAsync(CUBranchDTO branchDto);
 
         /// <summary>
         /// Detes branch with all testruns, results related to it

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrtApiService.Data;
 
-// NOTE: This is a bit overkill, but non the less, if you need ASP.NET,
+// NOTE: This is a bit overkill (Men at Work), but non the less, if you need ASP.NET,
 // this is the place where you can easily change everything. This was done
 // in order to keep everything in one place to avoid hard times while refactoring
-// when changing ORM or Framework over DB
+// when changing ORM or Framework over DB. 
 
 namespace TrtApiService.Implementation.Repositories
 {

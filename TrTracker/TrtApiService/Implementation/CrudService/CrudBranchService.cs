@@ -23,7 +23,7 @@ namespace TrtApiService.Implementation.CrudService
             _logger = logger;
         }
 
-        public async Task<RetVal<int>> CreateBranchAsync(CreateBranchDTO branchDto)
+        public async Task<RetVal<int>> CreateBranchAsync(CUBranchDTO branchDto)
         {
             if (string.IsNullOrWhiteSpace(branchDto.Name))
             {
@@ -123,7 +123,7 @@ namespace TrtApiService.Implementation.CrudService
             }
         }
 
-        public async Task<RetVal> UpdateBranchAsync(int id, UpdateBranchDTO branchDto)
+        public async Task<RetVal> UpdateBranchAsync(int id, CUBranchDTO branchDto)
         {
             if (string.IsNullOrWhiteSpace(branchDto.Name))
             {

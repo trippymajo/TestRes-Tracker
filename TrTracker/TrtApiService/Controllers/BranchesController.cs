@@ -40,7 +40,7 @@ namespace TrtApiService.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize(Policy = "CanManageBranches")]
-        public async Task<IActionResult> RenameBranch(int id, [FromBody] UpdateBranchDTO strNewName)
+        public async Task<IActionResult> RenameBranch(int id, [FromBody] CUBranchDTO strNewName)
         {
             var result = await _crudBranch.UpdateBranchAsync(id, strNewName);
             return this.ToActionResult(result);
@@ -50,7 +50,7 @@ namespace TrtApiService.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize(Policy = "CanManageBranches")]
-        public async Task<ActionResult<Branch>> CreateBranch([FromBody] CreateBranchDTO branch)
+        public async Task<ActionResult<Branch>> CreateBranch([FromBody] CUBranchDTO branch)
         {
             var result = await _crudBranch.CreateBranchAsync(branch);
             return this.ToActionResult(result);

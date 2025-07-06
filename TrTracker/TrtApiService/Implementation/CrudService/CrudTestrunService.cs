@@ -25,7 +25,7 @@ namespace TrtApiService.Implementation.CrudService
             _logger = logger;
         }
 
-        public async Task<RetVal<int>> CreateTestrunAsync(CreateTestrunDTO testrunDto)
+        public async Task<RetVal<int>> CreateTestrunAsync(CUTestrunDTO testrunDto)
         {
             if (string.IsNullOrWhiteSpace(testrunDto.Version))
                 return RetVal<int>.Fail(ErrorType.BadRequest, "Version is required.");
@@ -138,7 +138,7 @@ namespace TrtApiService.Implementation.CrudService
             }
         }
 
-        public async Task<RetVal> UpdateTestrunAsync(int id, UpdateTestrunDTO testrunDto)
+        public async Task<RetVal> UpdateTestrunAsync(int id, CUTestrunDTO testrunDto)
         {
             if (string.IsNullOrWhiteSpace(testrunDto.Version))
             {

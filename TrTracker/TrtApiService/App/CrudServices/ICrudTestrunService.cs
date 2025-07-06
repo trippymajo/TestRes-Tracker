@@ -25,14 +25,14 @@ namespace TrtApiService.App.CrudServices
         /// <param name="id">Id of the testrun to update</param>
         /// <param name="testrunDto">TestrunDto object with new data</param>
         /// <returns>Result of the update operation</returns>
-        Task<RetVal> UpdateTestrunAsync(int id, UpdateTestrunDTO testrunDto);
+        Task<RetVal> UpdateTestrunAsync(int id, CUTestrunDTO testrunDto);
 
         /// <summary>
         /// Creates a new testrun from the specified Testrun object
         /// </summary>
         /// <param name="testrunDto">TestrunDto object with data to create</param>
         /// <returns>Created testrun Id</returns>
-        Task<RetVal<int>> CreateTestrunAsync(CreateTestrunDTO testrunDto);
+        Task<RetVal<int>> CreateTestrunAsync(CUTestrunDTO testrunDto);
 
         /// <summary>
         /// Deletes the testrun with the specified id
