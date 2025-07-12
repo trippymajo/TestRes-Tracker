@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using StackExchange.Redis;
 
-using TrtShared.DTO;
+using TrtShared.Envelope;
 using TrtShared.ServiceCommunication;
 
 namespace TrtUploadService.Implementation.ResultTransport
@@ -32,10 +32,10 @@ namespace TrtUploadService.Implementation.ResultTransport
             }
         }
 
-        public async Task<TestRunDTO?> GetParsedDtoAsync(TimeSpan timeout)
+        public async Task<UniEnvelope?> GetParsedDataAsync(TimeSpan timeout)
         {
             var sub = _redis.GetSubscriber();
-            var tcs = new TaskCompletionSource<TestRunDTO?>();
+            var tcs = new TaskCompletionSource<UniEnvelope?>();
 
             var channel = RedisChannel.Literal("file-parsed");
             await sub.SubscribeAsync(channel, async (channel, message) =>
@@ -50,15 +50,15 @@ namespace TrtUploadService.Implementation.ResultTransport
                         return;
                     }
 
-                    var dto = JsonConvert.DeserializeObject<TestRunDTO?>(message!);
-                    if (dto != null)
+                    var uniEnvelope = JsonConvert.DeserializeObject<UniEnvelope?>(message!);
+                    if (uniEnvelope != null)
                     {
-                        tcs.TrySetResult(dto);
-                        _logger.LogInformation("Parsed DTO received from Redis with {NumResults} results", dto.Results.Count);
+                        tcs.TrySetResult(uniEnvelope);
+                        _logger.LogInformation("Parsed usniversal envelope received from Redis with {NumItems} items", uniEnvelope.Data.Count);
                     }
                     else
                     {
-                        _logger.LogError("Failed to deserialize TestRunDTO");
+                        _logger.LogError("Failed to deserialize data into universal envelope");
                         tcs.TrySetResult(null);
                     }
                     await sub.UnsubscribeAsync(channel);

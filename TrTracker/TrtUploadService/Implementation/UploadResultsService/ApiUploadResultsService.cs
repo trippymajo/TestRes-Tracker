@@ -1,4 +1,4 @@
-﻿using TrtShared.DTO;
+﻿using TrtShared.Envelope;
 using TrtUploadService.App.UploadResultsService;
 
 namespace TrtUploadService.Implementation.UploadResultsService
@@ -14,7 +14,8 @@ namespace TrtUploadService.Implementation.UploadResultsService
             _logger = logger;
         }
 
-        public async Task<bool> PushResultsToDbAsync(TestRunDTO dto)
+        // WIP
+        public async Task<bool> PushResultsToDbAsync(UniEnvelope dto)
         {
             try
             {

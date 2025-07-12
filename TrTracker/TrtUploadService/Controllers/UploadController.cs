@@ -62,18 +62,18 @@ namespace TrtApiService.Controllers
             }
 
             // Task to subscribe, in order to prevent race
-            var dtoTask = _resultTransport.GetParsedDtoAsync(TimeSpan.FromSeconds(60));
+            var parsedDataTask = _resultTransport.GetParsedDataAsync(TimeSpan.FromSeconds(60));
 
             // Now publishing path to ParserService
             await _resultTransport.PublishPathToFileAsync(fullFilePath);
             _logger.LogInformation("File has been successfully uploaded!");
 
             // Waiting for the response from ParserService
-            var parsedDto = await dtoTask;
-            if (parsedDto == null)
+            var uniEnvelope = await parsedDataTask;
+            if (uniEnvelope == null)
                 return StatusCode(500, "ParserService returned null or failed");
 
-            var result = await _uploadResults.PushResultsToDbAsync(parsedDto);
+            var result = await _uploadResults.PushResultsToDbAsync(uniEnvelope);
             if (!result)
                 return StatusCode(500, "Failed to save TestRun to database");
 
