@@ -14,24 +14,23 @@ namespace TrtUploadService.Implementation.UploadResultsService
             _logger = logger;
         }
 
-        // WIP
-        public async Task<bool> PushResultsToDbAsync(UniEnvelope dto)
+        public async Task<bool> PushResultsToDbAsync(UniEnvelope envelope)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("/api/UploadParsed", dto);
+                var response = await _httpClient.PostAsJsonAsync("/api/UploadParsed", envelope);
 
                 if (response.IsSuccessStatusCode)
-                    _logger.LogInformation("Successfully pushed TestRunDTO to API.");
+                    _logger.LogInformation("Successfully pushed universal envelope to API.");
                 else
                 {
-                    _logger.LogError("Failed to push TestRunDTO. StatusCode: {Status}", response.StatusCode);
+                    _logger.LogError("Failed to push universal envelope. StatusCode: {Status}", response.StatusCode);
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception occurred while posting DTO results to API.");
+                _logger.LogError(ex, "Exception occurred while posting universal envelope to API.");
                 return false;
             }
 
