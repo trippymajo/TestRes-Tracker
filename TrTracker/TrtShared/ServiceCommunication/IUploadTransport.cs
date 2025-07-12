@@ -1,4 +1,4 @@
-﻿using TrtShared.DTO;
+﻿using TrtShared.Envelope;
 
 namespace TrtShared.ServiceCommunication
 {
@@ -11,10 +11,10 @@ namespace TrtShared.ServiceCommunication
         public Task PublishPathToFileAsync(string path);
 
         /// <summary>
-        /// Subscribes to Parser service in order to get Parsed Dto
+        /// Subscribes to Parser service in order to get universal envelope data
         /// </summary>
         /// <param name="timeout">Timeout value to count</param>
-        /// <returns>Dto of the parsed file</returns>
-        public Task<TestRunDTO?> GetParsedDtoAsync(TimeSpan timeout);
+        /// <returns>universal envelope data of the parsed file</returns>
+        public Task<UniEnvelope?> GetParsedDataAsync(TimeSpan timeout);
     }
 }
