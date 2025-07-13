@@ -10,6 +10,7 @@ using TrtParserService.App.FileReader;
 using TrtParserService.Implementation.ParserCore;
 using TrtParserService.Implementation.ResultTransport;
 using TrtParserService.Implementation.FileReader;
+using TrtParserService.Implementation.ParserCore.TRX;
 
 namespace TrtParserService
 {
