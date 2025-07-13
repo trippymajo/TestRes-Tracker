@@ -1,4 +1,5 @@
-﻿using TrtParserService.ParserCore;
+﻿using TrtParserService.Implementation.ParserCore.TRX;
+using TrtParserService.ParserCore;
 
 namespace TrtParserService.Implementation.ParserCore
 {

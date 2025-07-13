@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-using TrtShared.DTO;
+using TrtShared.Envelope;
 using TrtShared.ServiceCommunication;
 
 using TrtParserService.ParserCore;
@@ -28,8 +28,9 @@ namespace TrtParserService
         /// Parsing workflow with filefactory and parsing itself
         /// </summary>
         /// <param name="fullFilePath">Full file path of parsed item</param>
-        /// <returns>TestRunDTO for transfering data to DB</returns>
-        private async Task<TestRunDTO?> ParseProcAsync(string fullFilePath)
+        /// <returns>UniEnvelope for transfering data to DB</returns>
+        // WIP
+        private async Task<UniEnvelope?> ParseProcAsync(string fullFilePath)
         {
             var parser = _parserFactory.Create(fullFilePath);
             if (parser == null)
