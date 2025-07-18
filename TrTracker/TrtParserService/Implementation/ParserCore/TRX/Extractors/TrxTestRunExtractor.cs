@@ -1,5 +1,5 @@
 ﻿using System.Xml.Linq;
-using TrtParserService.ParserCore;
+using TrtParserService.ParserCore.Extractors;
 using TrtShared.Envelope;
 
 namespace TrtParserService.Implementation.ParserCore.TRX.Extractors

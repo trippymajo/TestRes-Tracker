@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 using TrtParserService.Implementation.ParserCore.Utilities;
-using TrtParserService.ParserCore;
+using TrtParserService.ParserCore.Extractors;
 using TrtShared.Envelope;
 
 namespace TrtParserService.Implementation.ParserCore.TRX.Extractors

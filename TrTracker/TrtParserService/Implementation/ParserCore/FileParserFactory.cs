@@ -15,15 +15,14 @@ namespace TrtParserService.Implementation.ParserCore
         {
             var ext = Path.GetExtension(filePath).ToLowerInvariant();
 
-            switch (ext)
+            return ext switch
             {
-                case ".trx":
-                    return _provider.GetRequiredService<TrxParser>();
-                case ".xml":
-                    return null;
-            }
+                ".trx" => _provider.GetRequiredService<TrxParser>(),
 
-            return null;
+                ".xml" => null,
+
+                _ => null
+            };
         }
     }
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,10 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-TrtParserService-e4626c46-95a2-4924-b68a-39075eb77141</UserSecretsId>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="App\" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="4.0.0.6" />
