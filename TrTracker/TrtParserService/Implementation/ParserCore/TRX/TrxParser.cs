@@ -2,7 +2,9 @@
 using System.Xml.Linq;
 
 using TrtParserService.ParserCore;
-using TrtParserService.Implementation.ParserCore.TRX.Extractors;
+using TrtParserService.ParserCore.Extractors;
+
+using TrtParserService.Implementation.ParserCore.Utilities;
 
 using TrtShared.Envelope;
 
@@ -13,24 +15,10 @@ namespace TrtParserService.Implementation.ParserCore.TRX
         private readonly ILogger<TrxParser> _logger;
         private readonly List<IXmlExtractor> _extractors;
 
-        private XDocument? _xDoc;
-        private XNamespace? _xNamespace;
-
-
-        public TrxParser(ILogger<TrxParser> logger)
+        public TrxParser(IEnumerable<IXmlExtractor> extractors, ILogger<TrxParser> logger)
         {
             _logger = logger;
-            _xDoc = new XDocument();
-            _xNamespace = null;
-
-            _extractors = new List<IXmlExtractor>
-            {
-                new TrxTestRunExtractor(),
-                new TrxTimesExtractor(),
-                new TrxCountersExtractor(),
-                new TrxTestsResultsExtractor()
-            };
-
+            _extractors = ExtractorsUtils.GetExactExtractorsList(extractors, "trx");
         }
 
         public async Task<UniEnvelope?> ParseAsync(Stream? streamFile, string branch, string version)
@@ -40,6 +28,9 @@ namespace TrtParserService.Implementation.ParserCore.TRX
                 _logger.LogWarning("Parse failed. File stream is null");
                 return null;
             }
+
+            XDocument? xDoc = new XDocument();
+            XNamespace? xNamespace = null;
 
             // Avoid XML injections
             var settings = new XmlReaderSettings
@@ -52,8 +43,8 @@ namespace TrtParserService.Implementation.ParserCore.TRX
             try
             {
                 using var reader = XmlReader.Create(streamFile, settings);
-                _xDoc = await XDocument.LoadAsync(reader, LoadOptions.None, CancellationToken.None);
-                _xNamespace = _xDoc.Root?.GetDefaultNamespace();
+                xDoc = await XDocument.LoadAsync(reader, LoadOptions.None, CancellationToken.None);
+                xNamespace = xDoc.Root?.GetDefaultNamespace();
             }
             catch (Exception ex)
             {
@@ -67,7 +58,7 @@ namespace TrtParserService.Implementation.ParserCore.TRX
             try
             {
                 for (int i = 0; i < _extractors.Count; i++)
-                    _extractors[i].Extract(envelope, _xDoc, _xNamespace);
+                    _extractors[i].Extract(envelope, xDoc, xNamespace);
             }
             catch (Exception ex)
             {
@@ -75,7 +66,7 @@ namespace TrtParserService.Implementation.ParserCore.TRX
                 return null;
             }
 
-            if (envelope.Data.Count > 0)
+            if (envelope.Data.Count == 0)
             {
                 _logger.LogWarning("Parse failed. No results have been parsed from file");
                 return null;

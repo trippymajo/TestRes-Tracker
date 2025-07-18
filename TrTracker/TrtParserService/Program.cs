@@ -5,12 +5,14 @@ using Amazon.S3;
 using TrtShared.ServiceCommunication;
 
 using TrtParserService.ParserCore;
+using TrtParserService.ParserCore.Extractors;
 using TrtParserService.App.FileReader;
 
 using TrtParserService.Implementation.ParserCore;
 using TrtParserService.Implementation.ResultTransport;
 using TrtParserService.Implementation.FileReader;
 using TrtParserService.Implementation.ParserCore.TRX;
+using TrtParserService.Implementation.ParserCore.TRX.Extractors;
 
 namespace TrtParserService
 {
@@ -48,6 +50,16 @@ namespace TrtParserService
             }
 
                 builder.Services.AddSingleton<TrxParser>();
+
+            #region EXTRACTORS
+            // Trx extractors:
+            builder.Services.AddSingleton<IXmlExtractor, TrxTestRunExtractor>();
+            builder.Services.AddSingleton<IXmlExtractor, TrxCountersExtractor>();
+            builder.Services.AddSingleton<IXmlExtractor, TrxTimesExtractor>();
+            builder.Services.AddSingleton<IXmlExtractor, TrxTestsResultsExtractor>();
+            // XML extractors:
+
+            #endregion // EXTRACTORS
             #endregion // PARSER_SERVICE
 
             #region REDIS

@@ -1,7 +1,7 @@
 ﻿using System.Xml.Linq;
 using TrtShared.Envelope;
 
-namespace TrtParserService.ParserCore
+namespace TrtParserService.ParserCore.Extractors
 {
     public interface IXmlExtractor
     {

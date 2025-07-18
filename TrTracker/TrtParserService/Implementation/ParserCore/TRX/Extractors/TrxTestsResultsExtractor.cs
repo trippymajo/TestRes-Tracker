@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 using TrtParserService.Implementation.ParserCore.Utilities;
-using TrtParserService.ParserCore;
+using TrtParserService.ParserCore.Extractors;
 using TrtShared.Envelope;
 
 namespace TrtParserService.Implementation.ParserCore.TRX.Extractors
@@ -34,15 +34,12 @@ namespace TrtParserService.Implementation.ParserCore.TRX.Extractors
             // testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed"
             // testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b180009-24b6-463c-b718-b046746bda93">
 
-            var listUnitTestResults = xDoc.Descendants(XmlUtils.ElementNsName("UnitTestResult", xNS))
-                    .ToList();
+            var unitTestResults = xDoc.Descendants(XmlUtils.ElementNsName("UnitTestResult", xNS));
 
             var resultList = new List<Dictionary<string, object?>>();
 
-            for (int i = 0; i < listUnitTestResults.Count; i++)
+            foreach (var result in unitTestResults)
             {
-                var result = listUnitTestResults[i];
-
                 var testId = result.Attribute("testId")?.Value;
                 var testName = result.Attribute("testName")?.Value;
                 var duration = result.Attribute("duration")?.Value;
