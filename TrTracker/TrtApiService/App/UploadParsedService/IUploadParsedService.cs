@@ -1,5 +1,6 @@
 ﻿using TrtShared.RetValType;
 using TrtShared.DTO;
+using TrtShared.Envelope;
 
 namespace TrtApiService.App.UploadParsedService
 {
@@ -10,6 +11,6 @@ namespace TrtApiService.App.UploadParsedService
         /// </summary>
         /// <param name="dto">Data transfered from UploadService after parsing</param>
         /// <returns>If uploading results was successfull</returns>
-        Task<RetVal> UploadParsedAsync(TestRunDTO dto);
+        Task<RetVal> UploadParsedAsync(UniEnvelope envelope);
     }
 }

@@ -10,9 +10,25 @@ namespace TrtApiService.Models
         [Required]
         public string Version { get; set; } = string.Empty;
 
-        [Required]
-        [DataType(DataType.Date)] // TODO: need to think globally
-        public DateTime Date { get; set; }
+        // Time
+        public DateTimeOffset? StartedAt { get; set; }
+        public DateTimeOffset? FinishedAt { get; set; }
+
+        public long? DurationMs { get; set; }
+
+
+        // Agregates
+        public int? Total { get; set; }
+        public int? Passed { get; set; }
+        public int? Failed { get; set; }
+        public int? Skipped { get; set; }
+        public int? Errors { get; set; }
+
+        // Additional info about environment
+        public string? EnvironmentJson { get; set; }
+
+        // HashKey of the current TestRun
+        public string? IdempotencyKey { get; set; }
 
         // Foreign Key
         public int BranchId { get; set; }

@@ -7,6 +7,7 @@ using TrtApiService.Implementation.Repositories;
 
 using TrtShared.RetValType;
 using TrtShared.DTO;
+using TrtShared.Envelope;
 
 namespace TrtApiService.Implementation.UploadParsedService
 {
@@ -31,28 +32,28 @@ namespace TrtApiService.Implementation.UploadParsedService
             _testrun = testrun;
         }
 
-        public async Task<RetVal> UploadParsedAsync(TestRunDTO dto)
+        public async Task<RetVal> UploadParsedAsync(UniEnvelope envelope)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
                 // Branch processing
-                var branch = await _branch.GetOrCreateAsync(dto.Branch);
+                var branch = await _branch.GetOrCreateAsync(envelope.Branch);
 
                 // Test processing
-                await _test.CreateAsync(await GetAddedTestsListFromDtoAsync(dto));
+                await _test.CreateAsync(await GetAddedTestsListFromDtoAsync(envelope));
 
                 // Save changes to get ids of branches and tests
                 await _context.SaveChangesAsync();
 
                 // TestRun processing
-                var testRun = await _testrun.CreateAsync(GetTestrunFromDto(dto, branch));
+                var testRun = await _testrun.CreateAsync(GetTestrunFromDto(envelope, branch));
                 await _context.SaveChangesAsync();
 
                 // Results processing
-                var testsDic = await GetCurTestsDicAsync(dto);
-                await _result.CreateAsync(GetResultsListFromDto(dto, testRun.Id, testsDic));
+                var testsDic = await GetCurTestsDicAsync(envelope);
+                await _result.CreateAsync(GetResultsListFromDto(envelope, testRun.Id, testsDic));
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();

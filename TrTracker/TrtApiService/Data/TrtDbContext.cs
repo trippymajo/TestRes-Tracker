@@ -15,12 +15,50 @@ namespace TrtApiService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // TODO: use case insensetive columns in DB for names.
+
+            #region Branch
+
+            modelBuilder.Entity<Branch>()
+                .HasIndex(b => b.Name).IsUnique();
+
+            #endregion // Branch
+
+
+            #region Test
+
+            modelBuilder.Entity<Test>()
+                .HasIndex(t => t.Name).IsUnique();
+            modelBuilder.Entity<Test>()
+                .HasIndex(t => t.ClassName);
+
+            #endregion // Test
+
+
+            #region TestRun
+
             // Branch - Testrun Cascade
             modelBuilder.Entity<Testrun>()
                 .HasOne(tr => tr.Branch)
                 .WithMany(b => b.Testruns)
                 .HasForeignKey(tr => tr.BranchId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Testrun>()
+                .HasIndex(t => new { t.BranchId, t.StartedAt });
+            modelBuilder.Entity<Testrun>()
+                .HasIndex(t => t.Version);
+            modelBuilder.Entity<Testrun>()
+                .HasIndex(t => t.IdempotencyKey).IsUnique();
+
+            modelBuilder.Entity<Testrun>()
+                .Property(t => t.EnvironmentJson)
+                .HasColumnType("jsonb");
+
+            #endregion // TestRun
+
+
+            #region Result
 
             // Testrun - Result Cascade
             modelBuilder.Entity<Result>()
@@ -35,6 +73,15 @@ namespace TrtApiService.Data
                 .WithMany(t => t.Results)
                 .HasForeignKey(r => r.TestId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Result>()
+                .HasIndex(r => r.TestrunId);
+            modelBuilder.Entity<Result>()
+                .HasIndex(r => r.TestId);
+            modelBuilder.Entity<Result>()
+                .HasIndex(r => r.Outcome);
+
+            #endregion // Result
         }
     }
 }

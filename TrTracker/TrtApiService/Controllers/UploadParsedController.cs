@@ -4,6 +4,7 @@ using TrtApiService.App.UploadParsedService;
 
 using TrtShared.RetValExtensions;
 using TrtShared.DTO;
+using TrtShared.Envelope;
 
 namespace TrtApiService.Controllers
 {
@@ -23,13 +24,12 @@ namespace TrtApiService.Controllers
 
         // POST: api/UploadParsed
         [HttpPost]
-        public async Task<IActionResult> UploadParsedAsync([FromBody] TestRunDTO dto)
+        public async Task<IActionResult> UploadParsedAsync([FromBody] UniEnvelope dto)
         {
             // Validation should be in UploadParsedAsync(dto) workflow.
             if (dto == null 
-                || dto.Results.Any() == false 
-                || string.IsNullOrWhiteSpace(dto.Branch)
-                || string.IsNullOrWhiteSpace(dto.Version))
+                || dto.Data == null
+                || dto.Data.Count == 0)
             {
                 _logger.LogError("Results data is invalid");
                 return BadRequest("Invalid data");
