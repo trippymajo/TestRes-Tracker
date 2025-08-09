@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using TrtParserService.ParserCore;
 using TrtParserService.ParserCore.Extractors;
 using TrtShared.Envelope;
 
@@ -9,6 +10,8 @@ namespace TrtParserService.Implementation.ParserCore.TRX.Extractors
     /// </summary>
     public class TrxTestRunExtractor : IXmlExtractor
     {
+        public ParserExtension Format => ParserExtension.Trx;
+
         public void Extract(UniEnvelope envelope, XDocument xDoc, XNamespace? xNS = null)
         {
             //<TestRun xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

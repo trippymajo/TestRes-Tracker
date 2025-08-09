@@ -1,5 +1,6 @@
 ﻿using System.Xml.Linq;
 using TrtParserService.Implementation.ParserCore.Utilities;
+using TrtParserService.ParserCore;
 using TrtParserService.ParserCore.Extractors;
 using TrtShared.Envelope;
 
@@ -10,6 +11,8 @@ namespace TrtParserService.Implementation.ParserCore.TRX.Extractors
     /// </summary>
     public class TrxCountersExtractor : IXmlExtractor
     {
+        public ParserExtension Format => ParserExtension.Trx;
+
         public void Extract(UniEnvelope envelope, XDocument xDoc, XNamespace? xNS)
         {
             // <Counters total="578" executed="578"

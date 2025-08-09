@@ -6,6 +6,11 @@ namespace TrtParserService.ParserCore.Extractors
     public interface IXmlExtractor
     {
         /// <summary>
+        /// Format (extension) of the extractor
+        /// </summary>
+        public ParserExtension Format {  get; }
+
+        /// <summary>
         /// Extract specific xml data from test result format
         /// </summary>
         /// <param name="envelope">Universal envelope for transfering data</param>

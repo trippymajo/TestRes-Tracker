@@ -57,15 +57,15 @@ namespace TrtParserService
             {
                 try
                 {
-                    var dto = await ParseProcAsync(fullFilePath);
+                    var uniEnvelope = await ParseProcAsync(fullFilePath);
 
-                    if (dto == null)
+                    if (uniEnvelope == null)
                         _logger.LogError("DTO was not formed after parsing");
 
-                    // Publish result dto to UploadService via redis
-                    var dtoJson = JsonConvert.SerializeObject(dto);
-                    await _resultTransport.PublishParsedDtoAsync(dtoJson);
-                    _logger.LogInformation("Published to Redis: {DtoJson}", dtoJson);
+                    // Publish result uniEnvelope to UploadService via redis
+                    var dto = JsonConvert.SerializeObject(uniEnvelope);
+                    await _resultTransport.PublishParsedDtoAsync(dto);
+                    _logger.LogInformation("Published to Redis: {DtoJson}", dto);
 
                 }
                 catch (Exception ex)
