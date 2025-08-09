@@ -49,7 +49,7 @@ namespace TrtParserService
                 builder.Services.AddSingleton<IFileReader, LocalFileReader>();
             }
 
-            builder.Services.AddSingleton<IFileParser, TrxParser>();
+            builder.Services.AddSingleton<TrxParser>();
 
             #region EXTRACTORS
             // Trx extractors:

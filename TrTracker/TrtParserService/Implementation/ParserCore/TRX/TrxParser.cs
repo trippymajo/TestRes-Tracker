@@ -18,7 +18,7 @@ namespace TrtParserService.Implementation.ParserCore.TRX
         public TrxParser(IEnumerable<IXmlExtractor> extractors, ILogger<TrxParser> logger)
         {
             _logger = logger;
-            _extractors = ExtractorsUtils.GetExactExtractorsList(extractors, "trx");
+            _extractors = ExtractorsUtils.GetExactExtractorsList(extractors, ParserExtension.Trx);
         }
 
         public async Task<UniEnvelope?> ParseAsync(Stream? streamFile, string branch, string version)
