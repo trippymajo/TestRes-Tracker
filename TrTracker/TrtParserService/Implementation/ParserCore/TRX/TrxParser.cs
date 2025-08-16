@@ -53,7 +53,7 @@ namespace TrtParserService.Implementation.ParserCore.TRX
             }
 
             var envelope = new UniEnvelope();
-            envelope.SchemaId = "default";
+            envelope.SchemaId = "uni.upload.v1";
 
             try
             {
