@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="ServiceCommunication\" />
-    <Folder Include="Envelope\" />
     <Folder Include="Result\" />
   </ItemGroup>
 

@@ -1,13 +1,16 @@
 ﻿using System.Xml.Linq;
+
 using TrtParserService.Implementation.ParserCore.Utilities;
+using TrtParserService.Implementation.ParserCore.Utilities.ValueParsingExtensions;
 using TrtParserService.ParserCore;
 using TrtParserService.ParserCore.Extractors;
+
 using TrtShared.Envelope;
 
 namespace TrtParserService.Implementation.ParserCore.TRX.Extractors
 {
     /// <summary>
-    /// Counters root metadata extractor
+    /// Counters root metadata extractor for TestRun info
     /// </summary>
     public class TrxCountersExtractor : IXmlExtractor
     {
@@ -22,22 +25,35 @@ namespace TrtParserService.Implementation.ParserCore.TRX.Extractors
             // notExecuted="0" disconnected="0" warning="0" completed="0"
             // inProgress="0" pending="0" />
 
-            // Hmmm consider using Attributes and foreach
             var element = xDoc.Root?
                 .Element(XmlUtils.ElementNsName("Counters", xNS));
 
             if (element == null)
                 return;
 
-            var total = element.Attribute("total")?.Value;
-            var executed = element.Attribute("executed")?.Value;
-            var passed = element.Attribute("passed")?.Value;
-            var failed = element.Attribute("failed")?.Value;
+            var total = element.AttrInt("total");
+            var passed = element.AttrInt("passed");
+            var failed = element.AttrInt("failed");
+            // Error: Error, Aborted, Timeout, Disconnected, PassedButRunAborted
+            var error = element.AttrInt("error");
+            var notRunable = element.AttrInt("notRunnable");
+            var notExecuted = element.AttrInt("notExecuted");
+            var inconclus = element.AttrInt("inconclusive");
+            var passButAbort = element.AttrInt("passedButRunAborted");
+            var aborted = element.AttrInt("aborted");
+            var skipped = notRunable + notExecuted
+                + inconclus + passButAbort + aborted;
 
-            envelope.Data["total"] = total;
-            envelope.Data["executed"] = executed;
-            envelope.Data["passed"] = passed;
-            envelope.Data["failed"] = failed;
+
+            envelope.Data[UniEnvelopeSchema.Agregates] =
+                new Dictionary<string, object?>()
+                {
+                    [UniEnvelopeSchema.TestrunAgregates.Total] = total,
+                    [UniEnvelopeSchema.TestrunAgregates.Passed] = passed,
+                    [UniEnvelopeSchema.TestrunAgregates.Failed] = failed,
+                    [UniEnvelopeSchema.TestrunAgregates.Skipped] = skipped,
+                    [UniEnvelopeSchema.TestrunAgregates.Errors] = error
+                };
         }
     }
 }

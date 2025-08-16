@@ -31,9 +31,14 @@ namespace TrtApiService.Controllers
         /// POST file to be saved, parsed and pushed to DB
         /// </summary>
         /// <param name="file">File to save</param>
+        /// <param name="branch">Name of the Branch</param>
+        /// <param name="version">Product version</param>
         /// <returns>Http result</returns>
         [HttpPost]
-        public async Task<IActionResult> UploadDoc(IFormFile file)
+        public async Task<IActionResult> UploadDoc(
+            IFormFile file,
+            [FromForm] string? branch, // TODO: Add in envelope!
+            [FromForm] string? version) // TODO: Add in envelope!
         {
             var validationResult = _validator.Validate(file);
 
