@@ -60,13 +60,12 @@ Currently, microservices communicate with each other via Redis pub/sub and HTTP.
 ## Roadmap
 - [x] GitHub Actions CI for all projects (Mid June)
 - [x] Api Service CRUD (Mid July 2025)
-- [ ] Logging and RetVal in one function as Extension to Logger or static helper (End July 2025)
+- [ ] Own Envelope
 - [ ] Beta-1 (TRX Endpoint full working)
-- [ ] Full docker deployment (Early August 2025)
-- [ ] Full cloud deployment (Autumn)
-- [ ] FluentValidation across services (Release-1)
-- [ ] Security research (Release-1)
-- [ ] More test results formats support (Release-1)
+- [ ] Full docker deployment
+- [ ] Full cloud deployment
+- [ ] FluentValidation across services
+- [ ] Security research
 
 ## Contributing
 Pull requests, additional info in issues are welcome! But currently nothing related to ApiService, as it is not ready yet.
