@@ -1,5 +1,4 @@
 ﻿using TrtShared.RetValType;
-using TrtShared.DTO;
 using TrtShared.Envelope;
 
 namespace TrtApiService.App.UploadParsedService

@@ -3,7 +3,6 @@
 using TrtApiService.App.UploadParsedService;
 
 using TrtShared.RetValExtensions;
-using TrtShared.DTO;
 using TrtShared.Envelope;
 
 namespace TrtApiService.Controllers

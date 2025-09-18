@@ -13,75 +13,63 @@ namespace TrtApiService.Data
         public DbSet<Testrun> Testruns { get; set; }
         public DbSet<Result> Results { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder mb)
         {
+            base.OnModelCreating(mb);
             // TODO: use case insensetive columns in DB for names.
 
-            #region Branch
+            // === Branch ===
+            mb.Entity<Branch>()
+                .HasIndex(b => b.Name)
+                .IsUnique();
 
-            modelBuilder.Entity<Branch>()
-                .HasIndex(b => b.Name).IsUnique();
-
-            #endregion // Branch
-
-
-            #region Test
-
-            modelBuilder.Entity<Test>()
+            // === Test ===
+            mb.Entity<Test>()
                 .HasIndex(t => t.Name).IsUnique();
-            modelBuilder.Entity<Test>()
+            mb.Entity<Test>()
                 .HasIndex(t => t.ClassName);
 
-            #endregion // Test
 
-
-            #region TestRun
-
-            // Branch - Testrun Cascade
-            modelBuilder.Entity<Testrun>()
+            // === TestRun ===
+            // Branch -> Testrun Cascade
+            mb.Entity<Testrun>()
                 .HasOne(tr => tr.Branch)
                 .WithMany(b => b.Testruns)
                 .HasForeignKey(tr => tr.BranchId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); // Change to restrict in the future
 
-            modelBuilder.Entity<Testrun>()
-                .HasIndex(t => new { t.BranchId, t.StartedAt });
-            modelBuilder.Entity<Testrun>()
-                .HasIndex(t => t.Version);
-            modelBuilder.Entity<Testrun>()
+            mb.Entity<Testrun>()
                 .HasIndex(t => t.IdempotencyKey).IsUnique();
+            mb.Entity<Testrun>()
+                .HasIndex(t => new { t.BranchId, t.StartedAt });
+            mb.Entity<Testrun>()
+                .HasIndex(t => t.Version);
 
-            modelBuilder.Entity<Testrun>()
+            mb.Entity<Testrun>()
                 .Property(t => t.EnvironmentJson)
                 .HasColumnType("jsonb");
 
-            #endregion // TestRun
-
-
-            #region Result
-
+            // === Result ===
             // Testrun - Result Cascade
-            modelBuilder.Entity<Result>()
+            mb.Entity<Result>()
                 .HasOne(r => r.Testrun)
                 .WithMany(tr => tr.Results)
                 .HasForeignKey(r => r.TestrunId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); // Change to restrict in the future
 
             // Test - Result Restriction/No Action
-            modelBuilder.Entity<Result>()
+            mb.Entity<Result>()
                 .HasOne(r => r.Test)
                 .WithMany(t => t.Results)
                 .HasForeignKey(r => r.TestId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Result>()
+            mb.Entity<Result>()
                 .HasIndex(r => r.TestrunId);
-            modelBuilder.Entity<Result>()
+            mb.Entity<Result>()
                 .HasIndex(r => r.TestId);
-            modelBuilder.Entity<Result>()
+            mb.Entity<Result>()
                 .HasIndex(r => r.Outcome);
-
-            #endregion // Result
         }
     }
 }
