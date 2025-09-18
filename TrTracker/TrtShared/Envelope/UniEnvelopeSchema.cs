@@ -57,6 +57,7 @@
         /// <summary> -> Results </summary>
         public static class ResultInfo
         {
+            /// <summary> -> Result.Outcome </summary>
             public const string Outcome = "Outcome";
             /// <summary> -> Result.StartedAt : DateTimeOffset? </summary>
             public const string StartedAt = "StartedAt";    // ISO8601 (UTC)
