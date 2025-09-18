@@ -102,10 +102,12 @@ namespace TrtApiService.Implementation.Repositories
         /// UPDATE. Changes name of the current test
         /// </summary>
         /// <param name="test">Test to update</param>
+        /// <param name="className">Class name update</param>
         /// <param name="newName">Name to save for test</param>
-        public void Update(Test test, string newName, string? desc = null)
+        public void Update(Test test, string newName, string? className = null, string? desc = null)
         {
             test.Name = newName;
+            test.ClassName = className;
             test.Description = desc;
         }
     }

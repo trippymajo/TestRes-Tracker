@@ -42,6 +42,7 @@ namespace TrtApiService.Implementation.CrudService
                 var test = new Test
                 {
                     Name = testDto.Name,
+                    ClassName = testDto.ClassName,
                     Description = testDto.Description
                 };
 

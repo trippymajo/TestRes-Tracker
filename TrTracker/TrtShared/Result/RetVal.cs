@@ -62,7 +62,7 @@
         /// Returns RetVal<T> with fail result, error type and error text
         /// </summary>
         /// <returns>RetVal<T> object</returns>
-        public static RetVal<T> Fail(ErrorType errorType, string errorTxt)
+        public static new RetVal<T> Fail(ErrorType errorType, string errorTxt)
             => new RetVal<T>(false, default, errorType, errorTxt);
     }
 }

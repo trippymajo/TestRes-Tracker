@@ -10,13 +10,18 @@ namespace TrtApiService.DTOs
         [Required] // Let it be string at first, then i need my own enum
         public string Outcome { get; set; } = string.Empty;
 
+        public DateTimeOffset? StartedAt { get; set; }
+        public DateTimeOffset? FinishedAt { get; set; }
+
+        public string? ErrType { get; set; }
         public string? ErrMsg { get; set; }
+        public string? ErrStack { get; set; }
+        public string? StdOut { get; set; }
+        public string? StdErr { get; set; }
 
-        [Required]
-        public int TestrunId { get; set; }
-
-        [Required]
-        public int TestId { get; set; }
+        // FK
+        [Required] public int TestrunId { get; set; }
+        [Required] public int TestId { get; set; }
     }
 
     /// <summary>
@@ -27,6 +32,13 @@ namespace TrtApiService.DTOs
         [Required] // Let it be string at first, then i need my own enum
         public string Outcome { get; set; } = string.Empty;
 
+        public DateTimeOffset? StartedAt { get; set; }
+        public DateTimeOffset? FinishedAt { get; set; }
+
+        public string? ErrType { get; set; }
         public string? ErrMsg { get; set; }
+        public string? ErrStack { get; set; }
+        public string? StdOut { get; set; }
+        public string? StdErr { get; set; }
     }
 }

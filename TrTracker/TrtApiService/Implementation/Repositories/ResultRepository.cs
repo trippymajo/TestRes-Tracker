@@ -34,19 +34,7 @@ namespace TrtApiService.Implementation.Repositories
         /// </returns>
         public async Task<bool> IsExistsAsync(int id)
         {
-            return await _context.Tests.AnyAsync(t => t.Id == id);
-        }
-
-        /// <summary>
-        /// UPDATE
-        /// </summary>
-        /// <param name="result">Result entity to update</param>
-        /// <param name="outcome">Result of the specified test in testrun</param>
-        /// <param name="errMsg">Error Message which was provided</param>
-        public void Update(Result result, string outcome, string? errMsg = null)
-        {
-            result.Outcome = outcome;
-            result.ErrMsg = errMsg;
+            return await _context.Results.AnyAsync(t => t.Id == id);
         }
     }
 }

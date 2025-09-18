@@ -1,9 +1,9 @@
-﻿using TrtApiService.Implementation.Repositories;
+﻿using Humanizer;
 using TrtApiService.App.CrudServices;
 using TrtApiService.Data;
 using TrtApiService.DTOs;
+using TrtApiService.Implementation.Repositories;
 using TrtApiService.Models;
-
 using TrtShared.RetValType;
 
 namespace TrtApiService.Implementation.CrudService
@@ -29,7 +29,7 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal<int>> CreateResultAsync(CreateResultDTO resultDto)
         {
-            // Validation
+            // === Validation ===
             if (string.IsNullOrWhiteSpace(resultDto.Outcome))
             {
                 var errMsg = "Test Outcome is required for result";
@@ -59,12 +59,38 @@ namespace TrtApiService.Implementation.CrudService
                 return RetVal<int>.Fail(ErrorType.NotFound, errMsg);
             }
 
+            // Dont allow dublicates (TestId,TestrunId)
+            if (await _result.IsExistsAsync(resultDto.TestId, resultDto.TestrunId))
+            {
+                var errMsg = $"Result for Test {resultDto.TestId} in Testrun {resultDto.TestrunId} already exists";
+                _logger.LogWarning(errMsg);
+                return RetVal<int>.Fail(ErrorType.Conflict, errMsg);
+            }
+
             try
             {
+                static DateTimeOffset? ToUtc(DateTimeOffset? t) => t?.ToUniversalTime();
+
+                var startedUtc = ToUtc(resultDto.StartedAt);
+                var finishedUtc = ToUtc(resultDto.FinishedAt);
+
+                long? durationMs = null;
+                if (startedUtc.HasValue && finishedUtc.HasValue)
+                    durationMs = (long)(finishedUtc.Value - startedUtc.Value).TotalMilliseconds;
+
                 var result = new Result
                 {
                     Outcome = resultDto.Outcome,
+                    StartedAt = startedUtc,
+                    FinishedAt = finishedUtc,
+                    DurationMs = durationMs,
+
+                    ErrType = resultDto.ErrType,
                     ErrMsg = resultDto.ErrMsg,
+                    ErrStack = resultDto.ErrStack,
+                    StdOut = resultDto.StdOut,
+                    StdErr = resultDto.StdErr,
+
                     TestId = resultDto.TestId,
                     TestrunId = resultDto.TestrunId
                 };
@@ -165,9 +191,27 @@ namespace TrtApiService.Implementation.CrudService
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                _result.Update(result, resultDto.Outcome, resultDto.ErrMsg);
-                await _context.SaveChangesAsync();
+                static DateTimeOffset? ToUtc(DateTimeOffset? t) => t?.ToUniversalTime();
 
+                result.Outcome = resultDto.Outcome;
+                if (resultDto.ErrMsg != null) result.ErrMsg = resultDto.ErrMsg;
+                if (resultDto.ErrType != null) result.ErrType = resultDto.ErrType;
+                if (resultDto.ErrStack != null) result.ErrStack = resultDto.ErrStack;
+                if (resultDto.StdOut != null) result.StdOut = resultDto.StdOut;
+                if (resultDto.StdErr != null) result.StdErr = resultDto.StdErr;
+
+                if (resultDto.StartedAt.HasValue)
+                    result.StartedAt = ToUtc(resultDto.StartedAt);
+
+                if (resultDto.FinishedAt.HasValue)
+                    result.FinishedAt = ToUtc(resultDto.FinishedAt);
+
+                result.DurationMs = (result.StartedAt.HasValue && result.FinishedAt.HasValue)
+                    ? (long?)(result.FinishedAt.Value - result.StartedAt.Value).TotalMilliseconds
+                    : null;
+
+                _result.Update(result);
+                await _context.SaveChangesAsync();
                 return RetVal.Ok();
             }
             catch (Exception ex)
