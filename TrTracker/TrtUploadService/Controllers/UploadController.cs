@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
+using TrtShared.Envelope;
 using TrtShared.ServiceCommunication;
-using TrtUploadService.App.UploadResultsService;
 using TrtUploadService.App.UploadDocService;
+using TrtUploadService.App.UploadResultsService;
 using TrtUploadService.App.ValidatorService;
 
 namespace TrtApiService.Controllers
@@ -38,8 +38,14 @@ namespace TrtApiService.Controllers
         public async Task<IActionResult> UploadDoc(
             IFormFile file,
             [FromForm] string? branch, // TODO: Add in envelope!
-            [FromForm] string? version) // TODO: Add in envelope!
+            [FromForm] string? version, // TODO: Add in envelope!
+            [FromForm] string? IdempotencyKey) // optional fallback via form
         {
+            // Checking IdempotencyKey. Soft check - with allowing dublicates
+            string idemKey = Request.Headers["Idempotency-Key"].ToString();
+            if (string.IsNullOrWhiteSpace(idemKey))
+                idemKey = IdempotencyKey ?? string.Empty;
+
             var validationResult = _validator.Validate(file);
 
             switch (validationResult.Error)
@@ -77,6 +83,26 @@ namespace TrtApiService.Controllers
             var uniEnvelope = await parsedDataTask;
             if (uniEnvelope == null)
                 return StatusCode(500, "ParserService returned null or failed");
+
+            // Additional info for uniEnvelope
+            // (IdempotencyKey, Branch, Version) — Only if there is no such
+            if (!uniEnvelope.Data.ContainsKey(UniEnvelopeSchema.IdempotencyKey)
+                && !string.IsNullOrWhiteSpace(idemKey))
+            {
+                uniEnvelope.Data[UniEnvelopeSchema.IdempotencyKey] = idemKey;
+            }
+
+            if (!uniEnvelope.Data.ContainsKey(UniEnvelopeSchema.Branch)
+                && !string.IsNullOrWhiteSpace(branch))
+            {
+                uniEnvelope.Data[UniEnvelopeSchema.Branch] = branch;
+            }
+
+            if (!uniEnvelope.Data.ContainsKey(UniEnvelopeSchema.Version)
+                && !string.IsNullOrWhiteSpace(version))
+            {
+                uniEnvelope.Data[UniEnvelopeSchema.Version] = version;
+            }
 
             var result = await _uploadResults.PushResultsToDbAsync(uniEnvelope);
             if (!result)
