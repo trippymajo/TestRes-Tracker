@@ -10,7 +10,7 @@ namespace TrtApiService.DTOs
         [Required]
         [StringLength(255, MinimumLength = 1)]
         public string Name { get; set; } = string.Empty;
-
+        public string? ClassName { get; set; }
         public string? Description { get; set; }
     }
 }

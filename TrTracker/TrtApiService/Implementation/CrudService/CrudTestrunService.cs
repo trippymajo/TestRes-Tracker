@@ -1,9 +1,10 @@
-﻿using TrtApiService.Implementation.Repositories;
+﻿using Humanizer;
+using Microsoft.EntityFrameworkCore;
 using TrtApiService.App.CrudServices;
 using TrtApiService.Data;
 using TrtApiService.DTOs;
+using TrtApiService.Implementation.Repositories;
 using TrtApiService.Models;
-
 using TrtShared.RetValType;
 
 namespace TrtApiService.Implementation.CrudService
@@ -25,7 +26,7 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal<int>> CreateTestrunAsync(CUTestrunDTO testrunDto)
         {
-            // Validation
+            // === Validation ===
             if (!IsValidDto(testrunDto))
             {
                 var errMsg = "Testrun data provided is not valid";
@@ -36,7 +37,14 @@ namespace TrtApiService.Implementation.CrudService
             if (!await _branch.IsExistsAsync(testrunDto.BranchId))
                 return RetVal<int>.Fail(ErrorType.NotFound, $"Branch with id {testrunDto.BranchId} was not found.");
 
-            var exists = await _testrun.IsExistsAsync(testrunDto.BranchId, testrunDto.Version, testrunDto.Date);
+            static DateTimeOffset? ToUtc(DateTimeOffset? t) => t?.ToUniversalTime();
+            var startedUtc = ToUtc(testrunDto.StartedAt);
+            var finishedUtc = ToUtc(testrunDto.FinishedAt);
+            long? durationMs = (startedUtc.HasValue && finishedUtc.HasValue)
+                ? (long?)(finishedUtc.Value - startedUtc.Value).TotalMilliseconds
+                : null;
+
+            var exists = await _testrun.IsExistsAsync(testrunDto.BranchId, testrunDto.Version);
 
             if (exists)
             {
@@ -45,13 +53,24 @@ namespace TrtApiService.Implementation.CrudService
                 return RetVal<int>.Fail(ErrorType.Conflict, errMsg);
             }
 
+            if (!string.IsNullOrWhiteSpace(testrunDto.IdempotencyKey))
+            {
+                var keyExists = await _context.Testruns
+                    .AnyAsync(tr => tr.IdempotencyKey == testrunDto.IdempotencyKey);
+
+                if (keyExists)
+                    return RetVal<int>.Fail(ErrorType.Conflict, "Testrun with the same idempotency key already exists");
+            }
+
             var testrun = new Testrun
             {
                 Version = testrunDto.Version,
-                Date = testrunDto.Date.Kind == DateTimeKind.Utc
-                    ? testrunDto.Date
-                    : testrunDto.Date.ToUniversalTime(),
-                BranchId = testrunDto.BranchId
+                BranchId = testrunDto.BranchId,
+                StartedAt = startedUtc,
+                FinishedAt = finishedUtc,
+                DurationMs = durationMs,
+                EnvironmentJson = testrunDto.EnvironmentJson,
+                IdempotencyKey = testrunDto.IdempotencyKey
             };
 
             try
@@ -140,7 +159,7 @@ namespace TrtApiService.Implementation.CrudService
 
         public async Task<RetVal> UpdateTestrunAsync(int id, CUTestrunDTO testrunDto)
         {
-            // Validation
+            // === Validation ===
             if (!IsValidDto(testrunDto))
             {
                 var errMsg = "Testrun data provided is not valid";
@@ -165,7 +184,30 @@ namespace TrtApiService.Implementation.CrudService
                     return RetVal.Fail(ErrorType.NotFound, errMsg);
                 }
 
-                _testrun.Update(testrun, testrunDto.Version, testrunDto.Date, testrunDto.BranchId);
+                static DateTimeOffset? ToUtc(DateTimeOffset? t) => t?.ToUniversalTime();
+                var startedUtc = ToUtc(testrunDto.StartedAt);
+                var finishedUtc = ToUtc(testrunDto.FinishedAt);
+
+                testrun.Version = testrunDto.Version;
+                testrun.BranchId = testrunDto.BranchId;
+
+                if (testrunDto.StartedAt.HasValue)
+                    testrun.StartedAt = startedUtc;
+
+                if (testrunDto.FinishedAt.HasValue)
+                    testrun.FinishedAt = finishedUtc;
+
+                testrun.DurationMs = (testrun.StartedAt.HasValue && testrun.FinishedAt.HasValue)
+                    ? (long?)(testrun.FinishedAt.Value - testrun.StartedAt.Value).TotalMilliseconds
+                    : null;
+
+                if (testrunDto.EnvironmentJson != null)
+                    testrun.EnvironmentJson = testrunDto.EnvironmentJson;
+
+                if (!string.IsNullOrWhiteSpace(testrunDto.IdempotencyKey))
+                    testrun.IdempotencyKey = testrunDto.IdempotencyKey;
+
+                _testrun.Update(testrun);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -180,9 +222,15 @@ namespace TrtApiService.Implementation.CrudService
 
         private bool IsValidDto(CUTestrunDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Version)
-                || dto.Date != default
-                || dto.BranchId <= 0)
+            if (string.IsNullOrWhiteSpace(dto.Version)) 
+                return false;
+
+            if (dto.BranchId <= 0) 
+                return false;
+
+            if (dto.StartedAt.HasValue
+                && dto.FinishedAt.HasValue
+                && dto.FinishedAt < dto.StartedAt)
             {
                 return false;
             }

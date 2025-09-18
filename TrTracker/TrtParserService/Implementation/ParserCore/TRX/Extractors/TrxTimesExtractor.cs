@@ -21,7 +21,7 @@ namespace TrtParserService.Implementation.ParserCore.TRX.Extractors
             if (start.HasValue && finish.HasValue)
                 return null;
 
-            return Math.Max(0L, (finish.Value - start.Value).Ticks / TimeSpan.TicksPerMillisecond);
+            return Math.Max(0L, (finish!.Value - start!.Value).Ticks / TimeSpan.TicksPerMillisecond);
         }
 
         public void Extract(UniEnvelope envelope, XDocument xDoc, XNamespace? xNS)
